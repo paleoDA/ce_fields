@@ -5,88 +5,98 @@ environments:
     paths:
       results: "results"
       figures: "results/figures"
-      pmip4_data: "/path/to/pmip4/zarr"  # HPC only — update if mounted locally
-      cmip_hist_data: "/path/to/cmip_hist/zarr"  # HPC only — update if mounted locally
+      pmip4_data: "/path/to/pmip4"  # HPC only — update if mounted locally
+      cmip_hist_data: "/path/to/cmip_hist"  # HPC only — update if mounted locally
 
   hpc:
     root: "/home1/julieneg/ce_simul"
     paths:
       results: "results"
       figures: "results/figures"
-      pmip4_data: "/home1/julieneg/common_data/common/PMIP4_data/zarr"
-      cmip_hist_data: "/home1/julieneg/common_data/common/CMIP_hist_data/zarr"
+      pmip4_data: "/home1/julieneg/common_data/common/PMIP4_data"
+      cmip_hist_data: "/home1/julieneg/common_data/common/CMIP_hist_data"
 
 # File definitions
 files:
   # PMIP4 last-millennium simulations (HPC only).  Keys follow the convention
   # pmip4_<ModelName> so that get_pmip4_models() can auto-discover them.
   # Similarly, cmip_hist_<ModelName> keys are auto-discovered by get_cmip_hist_models().
+  #
+  # {pmip4_data} / {cmip_hist_data} point at a shared root that holds both a
+  # zarr/ and a netCDF/ subtree — storage format is a per-run choice, not a
+  # property of the whole corpus, so every path below must spell out which
+  # subtree it lives in explicitly.
   pmip4_ACCESS-ESM1-5:
-    path: "{pmip4_data}/ACCESS-ESM1-5/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr"
+    path: "{pmip4_data}/zarr/ACCESS-ESM1-5/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr"
     description: "PMIP4 ACCESS-ESM1-5 past1000 r1i1p1f1 monthly tas"
 
   pmip4_EC-Earth3-Veg-LR:
-    path: "{pmip4_data}/EC-Earth3-Veg-LR/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr"
+    path: "{pmip4_data}/zarr/EC-Earth3-Veg-LR/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr"
     description: "PMIP4 EC-Earth3-Veg-LR past1000 r1i1p1f1 monthly tas"
 
   pmip4_INM-CM4-8:
-    path: "{pmip4_data}/INM-CM4-8/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr"
+    path: "{pmip4_data}/zarr/INM-CM4-8/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr"
     description: "PMIP4 INM-CM4-8 past1000 r1i1p1f1 monthly tas"
 
   pmip4_MIROC-ES2L:
-    path: "{pmip4_data}/MIROC-ES2L/past1000/r1i1p1f2/Amon/tas/tas_raw.zarr"
+    path: "{pmip4_data}/zarr/MIROC-ES2L/past1000/r1i1p1f2/Amon/tas/tas_raw.zarr"
     description: "PMIP4 MIROC-ES2L past1000 r1i1p1f2 monthly tas"
 
   pmip4_MPI-ESM1-2-LR:
-    path: "{pmip4_data}/MPI-ESM1-2-LR/past2k/r1i1p1f1/Amon/tas/tas_raw.zarr"
+    path: "{pmip4_data}/zarr/MPI-ESM1-2-LR/past2k/r1i1p1f1/Amon/tas/tas_raw.zarr"
     description: "PMIP4 MPI-ESM1-2-LR past2k r1i1p1f1 monthly tas"
 
   pmip4_MRI-ESM2-0:
-    path: "{pmip4_data}/MRI-ESM2-0/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr"
+    path: "{pmip4_data}/zarr/MRI-ESM2-0/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr"
     description: "PMIP4 MRI-ESM2-0 past1000 r1i1p1f1 monthly tas"
 
   pmip4_iCESM:
-    path: "/home1/julieneg/common_data/common/PMIP4_data/netCDF/iCESM/tas_sfc_Amon_iCESM_past1000historical_085001-200512.nc"
+    path: "{pmip4_data}/netCDF/iCESM/tas_sfc_Amon_iCESM_past1000historical_085001-200512.nc"
     description: "iCESM past1000+historical combined monthly tas NetCDF (850–2005 CE)"
 
   pmip4_CESM1.1:
-    path: "/home1/julieneg/common_data/common/PMIP4_data/netCDF/CESM1.1"
+    path: "{pmip4_data}/netCDF/CESM1.1"
     description: "CESM1.1 PMIP4 past1000 monthly TREFHT in native CAM NetCDF format (HPC only)"
 
   pmip4_CESM2:
-    path: "/home1/julieneg/common_data/common/PMIP4_data/netCDF/CESM2"
+    path: "{pmip4_data}/netCDF/CESM2"
     description: "CESM2 PMIP4 past1000 run002 monthly TREFHT in native CAM NetCDF format (850–1849 CE, HPC only)"
 
   # CMIP6 historical simulations (1850–2014) for stitching with PMIP4 past1000 runs.
   # Whether a given model is actually stitched is determined at runtime from the
   # PMIP4 run's last year — not from the presence of an entry here.
+  #
+  # NOTE — cmip_hist_CESM2 lives on a separate mount ("project2", not the shared
+  # "common_data" root the other entries use) and so is left as a fully absolute
+  # path rather than built from {cmip_hist_data}; it won't resolve on environments
+  # that don't have that mount.
   cmip_hist_CESM2:
-    path: "/project2/julieneg_1707/common/CMIP_hist_data/netCDF/NCAR/CESM2/historical/r11i1p1f1/Amon/tas/gn/v20190514"
+    path: "{cmip_hist_data}/netCDF/NCAR/CESM2/historical/r11i1p1f1/Amon/tas/gn/v20190514"
     description: "CESM2 CMIP6 historical r11i1p1f1 monthly tas NetCDF directory (1850–2014, 4 files)"
 
   cmip_hist_ACCESS-ESM1-5:
-    path: "{cmip_hist_data}/ACCESS-ESM1-5/tas_raw.zarr"
+    path: "{cmip_hist_data}/zarr/ACCESS-ESM1-5/tas_raw.zarr"
     description: "CMIP6 ACCESS-ESM1-5 historical monthly tas (1850–2014)"
 
   cmip_hist_EC-Earth3-Veg-LR:
-    path: "{cmip_hist_data}/EC-Earth3-Veg-LR/tas_raw.zarr"
+    path: "{cmip_hist_data}/zarr/EC-Earth3-Veg-LR/tas_raw.zarr"
     description: "CMIP6 EC-Earth3-Veg-LR historical monthly tas (1850–2014)"
 
   cmip_hist_INM-CM4-8:
-    path: "{cmip_hist_data}/INM-CM4-8/tas_raw.zarr"
+    path: "{cmip_hist_data}/zarr/INM-CM4-8/tas_raw.zarr"
     description: "CMIP6 INM-CM4-8 historical monthly tas (1850–2014)"
 
   cmip_hist_MIROC-ES2L:
-    path: "{cmip_hist_data}/MIROC-ES2L/tas_raw.zarr"
-    description: "CMIP6 MIROC-ES2L historical monthly tas (1850–2014)"
+    path: "{cmip_hist_data}/netCDF/MIROC/MIROC-ES2L/historical/r1i1000p1f2/Amon/tas/gn/v20210107/tas_Amon_MIROC-ES2L_historical_r1i1000p1f2_gn_185001-201412.nc"
+    description: "CMIP6 MIROC-ES2L historical r1i1000p1f2 monthly tas (1850–2014) — branched from the actual past1000/past2k Dec-1849 restart, replacing the PiControl-branched r1i1p1f1 member"
 
   cmip_hist_MPI-ESM1-2-LR:
-    path: "{cmip_hist_data}/MPI-ESM1-2-LR/tas_raw.zarr"
+    path: "{cmip_hist_data}/zarr/MPI-ESM1-2-LR/tas_raw.zarr"
     description: "CMIP6 MPI-ESM1-2-LR historical monthly tas (1850–2014)"
 
   cmip_hist_MRI-ESM2-0:
-    path: "{cmip_hist_data}/MRI-ESM2-0/tas_raw.zarr"
-    description: "CMIP6 MRI-ESM2-0 historical monthly tas (1850–2014)"
+    path: "{cmip_hist_data}/netCDF/MRI/MRI-ESM2-0/historical/r1i1000p1f1/Amon/tas/gn/v20201029/tas_Amon_MRI-ESM2-0_historical_r1i1000p1f1_gn_185001-201412.nc"
+    description: "CMIP6 MRI-ESM2-0 historical r1i1000p1f1 monthly tas (1850–2014) — branched from the actual past1000/past2k Dec-1849 restart, replacing the PiControl-branched r1i1p1f1 member"
 
 # Current environment (can be overridden)
 current_environment: "laptop"
