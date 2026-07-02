@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ce-simul"
+version = "0.1.0"
+description = "Loading, stitching, and bias-correcting PMIP4 past1000/past2k and CMIP6-historical simulations"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Julien Emile-Geay", email = "julieneg@usc.edu"}
+]
+maintainers = [
+    {name = "Julien Emile-Geay", email = "julieneg@usc.edu"}
+]
+keywords = [
+    "climate",
+    "paleoclimate",
+    "PMIP4",
+    "CMIP6",
+    "common era",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "numpy>=1.20.0",
+    "pandas>=1.3.0",
+    "xarray>=0.19.0",
+    "zarr",
+    "cftime",
+    "PyYAML>=5.4.0",
+]
+
+[project.optional-dependencies]
+scripts = [
+    "matplotlib>=3.4.0",
+    "scipy>=1.7.0",
+    "tqdm",
+    "dask",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=3.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/paleoDA/ce_simul"
+Repository = "https://github.com/paleoDA/ce_simul"
+Issues = "https://github.com/paleoDA/ce_simul/issues"
+
+[tool.setuptools]
+packages = ["ce_simul"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --tb=short"
