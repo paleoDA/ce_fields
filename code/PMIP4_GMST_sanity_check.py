@@ -192,9 +192,7 @@ if gmst_series:
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
 
-    pmip_fig_dir = FIGURE_FOLDER / 'PMIP'
-    pmip_fig_dir.mkdir(parents=True, exist_ok=True)
-    fig.savefig(pmip_fig_dir / 'PMIP4_GMST_anomalies.png', dpi=300, bbox_inches='tight')
+    fig.savefig(FIGURE_FOLDER / 'PMIP4_GMST_anomalies.png', dpi=300, bbox_inches='tight')
     plt.close(fig)
 
     gmst_df = pd.DataFrame(gmst_series)
@@ -207,11 +205,11 @@ if gmst_series:
     with open(csv_path, 'a') as _f:
         _vals = ','.join(str(int(_do_stitch.get(n, False))) for n in gmst_df.columns)
         _f.write(f'has_stitch,{_vals}\n')
-    print(f"\n[{_ts()}] Saved: {pmip_fig_dir / 'PMIP4_GMST_anomalies.png'}")
+    print(f"\n[{_ts()}] Saved: {FIGURE_FOLDER / 'PMIP4_GMST_anomalies.png'}")
     print(f"[{_ts()}] Saved: {csv_path}  ({len(gmst_df)} years × {len(gmst_df.columns)} models)")
     subprocess.run(
         ['git', 'add',
-         str((pmip_fig_dir / 'PMIP4_GMST_anomalies.png').resolve()),
+         str((FIGURE_FOLDER / 'PMIP4_GMST_anomalies.png').resolve()),
          str(csv_path.resolve())],
         cwd=Path(__file__).resolve().parent.parent, check=False,
     )
