@@ -51,7 +51,8 @@ def load_stitched_tas(model_name: str, config: DataConfig = None) -> xr.DataArra
     -------
     xr.DataArray
         Annual-mean tas with a ``year`` coordinate in CE years, plus the
-        original spatial dims (lat, lon).
+        original spatial dims (lat, lon). ``attrs['stitched']`` records
+        whether a CMIP6 historical run was actually stitched in.
     """
     if config is None:
         config = DataConfig()
@@ -76,12 +77,14 @@ def load_stitched_tas(model_name: str, config: DataConfig = None) -> xr.DataArra
 
     pmip4_end_year = int(tas_annual.year.values[-1])
     hist_path = cmip_hist_models.get(model_name)
-    if hist_path is not None and pmip4_end_year < STITCH_THRESHOLD:
+    stitched = hist_path is not None and pmip4_end_year < STITCH_THRESHOLD
+    if stitched:
         ds_hist = open_nc_or_zarr(hist_path, decode_times=CFTIME_CODER)
         tas_hist = ds_hist['tas'].groupby('time.year').mean('time')
         ds_hist.close()
         tas_annual = stitch_annual_tas(tas_annual, tas_hist, model_name=model_name)
 
+    tas_annual.attrs['stitched'] = stitched
     return tas_annual
 
 

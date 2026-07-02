@@ -112,11 +112,11 @@ def apply_1850_adjustment(tas_annual, model_name, gmst=None):
     if model_name == CESM2_MODEL:
         slope, intercept = compute_cesm2_trend(gmst)
         trend = slope * tas_annual.year + intercept
-        return xr.where(tas_annual.year < STITCH_YEAR, tas_annual - trend, tas_annual)
+        return xr.where(tas_annual.year < STITCH_YEAR, tas_annual - trend, tas_annual, keep_attrs=True)
 
     if model_name in FLAT_OFFSET_MODELS:
         offset = compute_flat_offsets(gmst, [model_name])[model_name]
-        return xr.where(tas_annual.year < STITCH_YEAR, tas_annual + offset, tas_annual)
+        return xr.where(tas_annual.year < STITCH_YEAR, tas_annual + offset, tas_annual, keep_attrs=True)
 
     return tas_annual
 
