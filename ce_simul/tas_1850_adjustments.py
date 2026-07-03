@@ -2,16 +2,20 @@
 tas_1850_adjustments.py
 ========================
 Apply the paleo/historical (1850) stitch corrections derived in
-notebooks/PMIP4_1850_stitch.ipynb to full 3-D (year, lat, lon) PMIP4 tas
+code/PMIP4_1850_stitch.ipynb to full 3-D (year, lat, lon) PMIP4 tas
 fields — not just the GMST scalar time series used to derive them.
 
 Two kinds of correction, both derived from GMST and then applied uniformly
 across the spatial field (per the notebook's approach: the field-level
 correction is a function of year only, identical at every grid point):
 
-* Flat offset (ACCESS-ESM1-5, EC-Earth3-Veg-LR, MRI-ESM2-0): a constant
-  shift added to every pre-1850 year, matching the past1000 1825-1849 mean
-  to the historical 1850-1874 mean.
+* Flat offset (ACCESS-ESM1-5 only): a constant shift added to every
+  pre-1850 year, equal to the single-year discontinuity v(1850) - v(1849)
+  in GMST. This is the actual restart discontinuity, not a difference of
+  pre/post-1850 decadal means — the notebook shows that mean-matching
+  conflates the two, wrongly flagging several models (EC-Earth3-Veg-LR,
+  INM-CM4-8, MIROC-ES2L, MPI-ESM1-2-LR, MRI-ESM2-0) whose 1849->1850 jump
+  is actually within +/-0.1 degC and requires no correction at all.
 * CESM2 linear detrend: past1000.002 carries a spurious warming drift (see
   the notebook for the physical explanation — background volcanic forcing
   removed at run start). We fit a linear trend to the CESM2 GMST over
@@ -43,9 +47,10 @@ GMST_ANOMALIES_CSV = (
     Path(__file__).resolve().parent.parent / 'results' / 'tables' / 'PMIP4_GMST_anomalies.csv'
 )
 
-FLAT_OFFSET_MODELS = ['ACCESS-ESM1-5', 'EC-Earth3-Veg-LR', 'MRI-ESM2-0']
+FLAT_OFFSET_MODELS = ['ACCESS-ESM1-5']
 CESM2_MODEL = 'CESM2'
 STITCH_YEAR = 1850
+TOLERANCE = 0.1  # degC; |v(1850) - v(1849)| below this is treated as noise, not a stitch artifact
 
 
 @lru_cache(maxsize=None)
@@ -58,13 +63,13 @@ def _load_gmst(csv_path=GMST_ANOMALIES_CSV):
 
 
 def compute_flat_offsets(gmst, models=FLAT_OFFSET_MODELS):
-    """Offset = mean(hist 1850-1874) - mean(paleo 1825-1849), per model."""
+    """Offset = v(1850) - v(1849), per model — the single-year restart
+    discontinuity, not a difference of pre/post-1850 decadal means (see
+    the notebook's "Choosing the right diagnostic" section for why)."""
     offsets = {}
     for name in models:
         s = gmst[name].dropna()
-        pre_mean  = s[(s.index >= 1825) & (s.index < STITCH_YEAR)].mean()
-        post_mean = s[(s.index >= STITCH_YEAR) & (s.index < STITCH_YEAR + 25)].mean()
-        offsets[name] = post_mean - pre_mean
+        offsets[name] = s.loc[STITCH_YEAR] - s.loc[STITCH_YEAR - 1]
     return offsets
 
 
