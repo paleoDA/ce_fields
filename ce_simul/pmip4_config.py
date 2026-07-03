@@ -31,11 +31,38 @@ TRIM_END = {
     'CESM1.1': 1,
 }
 
-# Pre-1850 past1000 stitch corrections (flat offset for ACCESS-ESM1-5,
-# EC-Earth3-Veg-LR, MRI-ESM2-0; linear detrend for CESM2) are computed
-# directly from results/tables/PMIP4_GMST_anomalies.csv by
-# scripts/PMIP4_tas_1850_adjustments.py, which stays in sync with
-# notebooks/PMIP4_1850_stitch.ipynb. See apply_1850_adjustment() there.
+# Pre-1850 past1000 stitch corrections (flat offset for ACCESS-ESM1-5;
+# linear detrend for CESM2 — the only 2 models whose 1849->1850 jump exceeds
+# noise, see code/PMIP4_1850_stitch.ipynb) were computed from
+# results/tables/PMIP4_GMST_anomalies.csv and applied in-place to the
+# archived data by code/apply_1850_adjustments.py. load_stitched_tas() reads
+# the corrected files by default (use_corrected=True); pass
+# use_corrected=False to read the original raw data instead (registered
+# under raw_pmip4_<model> in data_config.yml).
+
+# Raw model name -> display name for models with a registered correction, so
+# downstream repos (ce_val, warmth_and_trends) can label corrected series
+# distinctly in plots/tables instead of silently treating them the same as
+# an uncorrected run. Use display_name() below rather than reading this
+# dict directly.
+CORRECTED_MODELS = {
+    'ACCESS-ESM1-5': 'ACCESS-ESM1-5c',
+    'CESM2': 'CESM2c',
+}
+
+
+def display_name(model_name: str, corrected: bool = True) -> str:
+    """Return the label to use for `model_name` in plots/tables/legends.
+
+    Appends the corrected-run suffix (see CORRECTED_MODELS, e.g.
+    'CESM2' -> 'CESM2c') when `corrected` is True and the model actually has
+    a registered correction; otherwise returns `model_name` unchanged. Pass
+    the same `corrected`/`use_corrected` value used to load the data, so the
+    label always reflects what was actually plotted.
+    """
+    if corrected and model_name in CORRECTED_MODELS:
+        return CORRECTED_MODELS[model_name]
+    return model_name
 
 # ---------------------------------------------------------------------------
 # Path-dependent registries (require a DataConfig instance)

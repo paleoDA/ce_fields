@@ -17,8 +17,19 @@ pip install -e .
 from ce_simul import DataConfig, load_corrected_tas
 
 config = DataConfig()
-tas = load_corrected_tas('ACCESS-ESM1-5', config=config)  # stitched + 1850-bias-corrected annual tas
+tas = load_corrected_tas('ACCESS-ESM1-5', config=config)  # stitched annual tas, 1850-bias-corrected by default
+print(tas.attrs['display_name'])  # 'ACCESS-ESM1-5c' -- use this label in plots/tables
+
+# To audit against the original, uncorrected data instead:
+raw = load_corrected_tas('ACCESS-ESM1-5', config=config, use_corrected=False)
+print(raw.attrs['display_name'])  # 'ACCESS-ESM1-5'
 ```
+
+Only ACCESS-ESM1-5 and CESM2 have a registered pre-1850 correction (see
+`ce_simul.pmip4_config.CORRECTED_MODELS`); `use_corrected` has no effect for
+any other model. Always read the label from `attrs['display_name']` rather
+than hardcoding it, so plots/tables stay honest about which series were
+corrected.
 
 See `ce_simul/products.py` for the full API (`load_stitched_tas`, `load_corrected_tas`, `compute_gmst`).
 
