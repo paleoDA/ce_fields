@@ -27,8 +27,16 @@ files:
   # property of the whole corpus, so every path below must spell out which
   # subtree it lives in explicitly.
   pmip4_ACCESS-ESM1-5:
+    path: "{pmip4_data}/netCDF/CSIRO/ACCESS-ESM1-5/past1000/r1i1p1f1/Amon/tas/gn/v20230508/tas_Amon_ACCESS-ESM1-5_past1000_r1i1p1f1_gn_1850corrected.nc"
+    description: "PMIP4 ACCESS-ESM1-5 past1000 r1i1p1f1 monthly tas, 1849->1850 flat-offset corrected (code/apply_1850_adjustments.py)"
+
+  # Raw (pre-correction) counterpart of pmip4_ACCESS-ESM1-5, kept for
+  # provenance/auditing. Not prefixed "pmip4_" so get_pmip4_models() doesn't
+  # auto-discover it as a 10th model; load_stitched_tas(..., use_corrected=False)
+  # resolves this key directly. See ce_simul.pmip4_config.CORRECTED_MODELS.
+  raw_pmip4_ACCESS-ESM1-5:
     path: "{pmip4_data}/zarr/ACCESS-ESM1-5/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr"
-    description: "PMIP4 ACCESS-ESM1-5 past1000 r1i1p1f1 monthly tas"
+    description: "PMIP4 ACCESS-ESM1-5 past1000 r1i1p1f1 monthly tas, uncorrected"
 
   pmip4_EC-Earth3-Veg-LR:
     path: "{pmip4_data}/zarr/EC-Earth3-Veg-LR/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr"
@@ -59,8 +67,13 @@ files:
     description: "CESM1.1 PMIP4 past1000 monthly TREFHT in native CAM NetCDF format (HPC only)"
 
   pmip4_CESM2:
+    path: "{pmip4_data}/netCDF/CESM2/corrected/TREFHT_Amon_CESM2_past1000_run002_1850corrected.nc"
+    description: "CESM2 PMIP4 past1000 run002 monthly TREFHT (850–1849 CE), linear-detrend corrected for the past1000.002 volcanic-background drift artifact (code/apply_1850_adjustments.py)"
+
+  # Raw (pre-correction) counterpart of pmip4_CESM2 -- see note above raw_pmip4_ACCESS-ESM1-5.
+  raw_pmip4_CESM2:
     path: "{pmip4_data}/netCDF/CESM2"
-    description: "CESM2 PMIP4 past1000 run002 monthly TREFHT in native CAM NetCDF format (850–1849 CE, HPC only)"
+    description: "CESM2 PMIP4 past1000 run002 monthly TREFHT in native CAM NetCDF format (850–1849 CE), uncorrected"
 
   # CMIP6 historical simulations (1850–2014) for stitching with PMIP4 past1000 runs.
   # Whether a given model is actually stitched is determined at runtime from the

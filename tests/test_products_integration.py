@@ -74,3 +74,57 @@ def test_load_corrected_tas_noop_for_unregistered_model(synthetic_config):
 def test_unknown_model_raises(synthetic_config):
     with pytest.raises(KeyError):
         load_stitched_tas('NotAModel', config=synthetic_config)
+
+
+def _make_monthly_ds_var(year_start, year_end, var, val=280.0):
+    """Like _make_monthly_ds but with a caller-chosen variable name (CESM2
+    native output uses 'TREFHT', not 'tas' -- see pmip4_config.MODEL_VAR)."""
+    ds = _make_monthly_ds(year_start, year_end, val=val)
+    return ds.rename({'tas': var})
+
+
+@pytest.fixture
+def corrected_model_config(tmp_path):
+    """A DataConfig for 'CESM2' (a real entry in pmip4_config.CORRECTED_MODELS)
+    with distinct corrected/raw paleo paths, so use_corrected can be tested."""
+    corrected_path = tmp_path / 'corrected.zarr'
+    raw_path       = tmp_path / 'raw.zarr'
+    hist_path      = tmp_path / 'hist.zarr'
+
+    _make_monthly_ds_var(1800, 1849, 'TREFHT', val=280.0).to_zarr(corrected_path, mode='w')
+    _make_monthly_ds_var(1800, 1849, 'TREFHT', val=270.0).to_zarr(raw_path, mode='w')
+    _make_monthly_ds(1850, 1900, val=282.0).to_zarr(hist_path, mode='w')
+
+    yml = {
+        'environments': {
+            'laptop': {'root': str(tmp_path), 'paths': {}},
+        },
+        'files': {
+            'pmip4_CESM2': {'path': str(corrected_path)},
+            'raw_pmip4_CESM2': {'path': str(raw_path)},
+            'cmip_hist_CESM2': {'path': str(hist_path)},
+        },
+        'current_environment': 'laptop',
+    }
+    yml_path = tmp_path / 'data_config.yml'
+    yml_path.write_text(yaml.dump(yml))
+    return DataConfig(config_path=yml_path)
+
+
+def test_use_corrected_true_reads_corrected_path(corrected_model_config):
+    tas = load_stitched_tas('CESM2', config=corrected_model_config, use_corrected=True)
+    assert np.allclose(tas.sel(year=slice(1800, 1849)).values, 280.0)
+    assert tas.attrs['corrected'] is True
+    assert tas.attrs['display_name'] == 'CESM2c'
+
+
+def test_use_corrected_false_reads_raw_path(corrected_model_config):
+    tas = load_stitched_tas('CESM2', config=corrected_model_config, use_corrected=False)
+    assert np.allclose(tas.sel(year=slice(1800, 1849)).values, 270.0)
+    assert tas.attrs['corrected'] is False
+    assert tas.attrs['display_name'] == 'CESM2'
+
+
+def test_load_corrected_tas_passes_through_use_corrected(corrected_model_config):
+    raw = load_corrected_tas('CESM2', config=corrected_model_config, use_corrected=False)
+    assert np.allclose(raw.sel(year=slice(1800, 1849)).values, 270.0)
