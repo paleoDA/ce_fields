@@ -83,7 +83,13 @@ def stitch_annual_tas(
             f"and historical (starts {hist_start}). Cannot stitch automatically."
         )
 
-    stitched = xr.concat([paleo_da, hist_da], dim='year')
+    # join='override': paleo and historical are the same model's grid, but
+    # each file's lat/lon labels can carry negligible floating-point
+    # differences depending on how that run was archived. 'override' keeps
+    # paleo_da's coordinate labels as-is instead of unioning near-duplicate
+    # values (join='outer') or hard-failing on them (the coming join='exact'
+    # default).
+    stitched = xr.concat([paleo_da, hist_da], dim='year', join='override')
     print(
         f"{label}Stitched: CE {int(stitched.year.values[0])}–"
         f"{int(stitched.year.values[-1])} ({len(stitched.year)} years)"
