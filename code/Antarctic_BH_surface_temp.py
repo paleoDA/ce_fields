@@ -116,6 +116,9 @@ for name in PMIP4_MODELS:
 
         tas_sites = tas_annual.sel(lat=site_lat_da, lon=site_lon_da, method='nearest')
         tas_sites = tas_sites.load()
+        # Some models carry a scalar 'height' coord (e.g. 2m) for tas; others
+        # don't. Irrelevant here, and inconsistent presence breaks xr.concat.
+        tas_sites = tas_sites.drop_vars('height', errors='ignore')
         print(f" done ({_elapsed(t0)})", flush=True)
 
         # Wrap in a DataArray labelled by model (display_name distinguishes
