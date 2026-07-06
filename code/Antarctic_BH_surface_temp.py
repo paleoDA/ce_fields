@@ -9,9 +9,11 @@ Sites (Table 1 of Lyu et al., 2020, Clim. Past 16, 1411–1428):
     Styx         73°51.10′ S, 163°41.22′ E
 
 For each model, ce_simul.products.load_corrected_tas() loads the past1000/
-past2k run, stitches it with the CMIP6 historical run (1850–2014/2005) where
-needed, and applies the pre-1850 bias correction — the same pipeline used
-throughout ce_simul.
+past2k run and stitches it with the CMIP6 historical run (1850–2014/2005)
+where needed — the same pipeline used throughout ce_simul. Only
+ACCESS-ESM1-5 and CESM2 carry a pre-1850 stitch-bias correction, and it is
+already baked into their archived data by code/apply_1850_adjustments.py;
+no correction is applied here at runtime for any model.
 
 Output
 ------
@@ -88,10 +90,12 @@ for name in PMIP4_MODELS:
     print(f"\n[{_ts()}]   {name}")
 
     try:
-        print(f"[{_ts()}]     loading + stitching + bias-correcting …", end='', flush=True)
+        print(f"[{_ts()}]     loading + stitching …", end='', flush=True)
         t0 = time.time()
         tas_annual = load_corrected_tas(name, config=config)
-        print(f" done ({_elapsed(t0)})", flush=True)
+        label = tas_annual.attrs['display_name']
+        tag = f" (pre-corrected archive, labelled {label})" if tas_annual.attrs.get('corrected') else ""
+        print(f" done{tag} ({_elapsed(t0)})", flush=True)
 
         year0, year1 = int(tas_annual.year.values[0]), int(tas_annual.year.values[-1])
         print(f"[{_ts()}]     time axis: {year0}–{year1} CE  ({len(tas_annual.year)} years)")
@@ -114,8 +118,9 @@ for name in PMIP4_MODELS:
         tas_sites = tas_sites.load()
         print(f" done ({_elapsed(t0)})", flush=True)
 
-        # Wrap in a DataArray labelled by model
-        da = tas_sites.assign_coords(model=name).expand_dims('model')
+        # Wrap in a DataArray labelled by model (display_name distinguishes
+        # corrected runs, e.g. 'CESM2' -> 'CESM2c')
+        da = tas_sites.assign_coords(model=label).expand_dims('model')
         per_model.append(da)
         print(f"[{_ts()}]     {name} complete ({_elapsed(t_model)})")
 
