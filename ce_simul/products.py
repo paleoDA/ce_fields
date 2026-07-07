@@ -89,6 +89,23 @@ def load_stitched_tas(model_name: str, config: DataConfig = None, use_corrected:
     var = MODEL_VAR.get(model_name, 'tas')
     tas_annual = ds_paleo[var].groupby('time.year').mean('time')
 
+    # Some archived past1000 runs (e.g. CESM2 run002) truncate mid-year --
+    # groupby('time.year').mean('time') would silently average whatever
+    # month(s) happen to be present as if they were a full annual mean (a
+    # single Antarctic-summer month standing in for the year average causes
+    # a spurious multi-degree warm spike). Drop any year not backed by all
+    # 12 months before it reaches offset/trim/stitch.
+    n_months = ds_paleo['time'].groupby('time.year').count()
+    incomplete = n_months.where(n_months != 12, drop=True)
+    if incomplete.size:
+        label = f"[{model_name}] " if model_name else ""
+        print(
+            f"{label}Dropping partial year(s) with <12 months present: "
+            + ", ".join(f"{int(y)} ({int(n)} months)"
+                        for y, n in zip(incomplete.year.values, incomplete.values))
+        )
+        tas_annual = tas_annual.sel(year=n_months.where(n_months == 12, drop=True).year)
+
     offset = YEAR_OFFSETS.get(model_name, 0)
     if offset:
         tas_annual = tas_annual.assign_coords(year=tas_annual.year - offset)
