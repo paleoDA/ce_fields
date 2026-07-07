@@ -126,7 +126,11 @@ def load_stitched_tas(model_name: str, config: DataConfig = None, use_corrected:
     tas_annual.attrs['stitched'] = stitched
     tas_annual.attrs['corrected'] = corrected
     tas_annual.attrs['display_name'] = display_name(model_name, corrected=corrected)
-    return tas_annual
+    # Force eager read: some sources (e.g. CESM1.1's native multi-file CAM
+    # output) come back dask-backed with one chunk per year, so a lazy
+    # array's .sel() cost scales with n_chunks on every call -- catastrophic
+    # for the per-station loop callers run downstream.
+    return tas_annual.load()
 
 
 def load_corrected_tas(model_name: str, config: DataConfig = None, use_corrected: bool = True) -> xr.DataArray:
