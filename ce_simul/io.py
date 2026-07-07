@@ -44,14 +44,17 @@ def regrid_conservative(
     """
     import xesmf as xe
 
+    # Clip to [-90, 90]: these are pole-inclusive FV grids (a grid point sits
+    # at exactly +/-90 deg), so the unclipped midpoint-extrapolated polar
+    # edge would otherwise land just outside the physical latitude domain.
     source_grid = xr.Dataset({
         'lat': source_da.lat, 'lon': source_da.lon,
-        'lat_b': ('lat_b', _cell_bounds(source_da.lat)),
+        'lat_b': ('lat_b', np.clip(_cell_bounds(source_da.lat), -90, 90)),
         'lon_b': ('lon_b', _cell_bounds(source_da.lon)),
     })
     target_grid = xr.Dataset({
         'lat': target_lat, 'lon': target_lon,
-        'lat_b': ('lat_b', _cell_bounds(target_lat)),
+        'lat_b': ('lat_b', np.clip(_cell_bounds(target_lat), -90, 90)),
         'lon_b': ('lon_b', _cell_bounds(target_lon)),
     })
     regridder = xe.Regridder(source_grid, target_grid, method='conservative', periodic=True)
