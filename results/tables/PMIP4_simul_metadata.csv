@@ -1,0 +1,123 @@
+file_key,model,variable,variable_units,variable_long_name,n_lat,n_lon,lat_spacing_deg,lon_spacing_deg,n_time_steps,time_units,time_calendar,format,n_files,path,source_id,source,institution_id,institution,contact,variant_label,realization_index,initialization_index,physics_index,forcing_index,experiment_id,grid_label,nominal_resolution,further_info_url,tracking_id,Conventions,parent_source_id,parent_experiment_id,parent_variant_label,description
+pmip4_ACCESS-ESM1-5,ACCESS-ESM1-5,tas,K,Near-Surface Air Temperature,145,192,1.25,1.875,12000,days since 0850-01-01,proleptic_gregorian,netcdf-single,,/home1/julieneg/common_data/common/PMIP4_data/netCDF/CSIRO/ACCESS-ESM1-5/past1000/r1i1p1f1/Amon/tas/gn/v20230508/tas_Amon_ACCESS-ESM1-5_past1000_r1i1p1f1_gn_1850corrected.nc,ACCESS-ESM1-5,"ACCESS-ESM1.5 (2019): 
+aerosol: CLASSIC (v1.0)
+atmos: HadGAM2 (r1.1, N96; 192 x 145 longitude/latitude; 38 levels; top level 39255 m)
+atmosChem: none
+land: CABLE2.4
+landIce: none
+ocean: ACCESS-OM2 (MOM5, tripolar primarily 1deg; 360 x 300 longitude/latitude; 50 levels; top grid cell 0-10 m)
+ocnBgchem: WOMBAT (same grid as ocean)
+seaIce: CICE4.1 (same grid as ocean)",CSIRO,"Commonwealth Scientific and Industrial Research Organisation, Aspendale, Victoria 3195, Australia",access_csiro@csiro.au,r1i1p1f1,1,1,1,1,past1000,gn,250 km,https://furtherinfo.es-doc.org/CMIP6.CSIRO.ACCESS-ESM1-5.past1000.none.r1i1p1f1,hdl:21.14100/fc060921-2e77-45e2-88d9-02debf13453c,CF-1.7 CMIP-6.2,no parent,no parent,no parent,"PMIP4 ACCESS-ESM1-5 past1000 r1i1p1f1 monthly tas, 1849->1850 flat-offset corrected (code/apply_1850_adjustments.py)"
+raw_pmip4_ACCESS-ESM1-5,pmip4_ACCESS-ESM1-5,tas,K,Near-Surface Air Temperature,145,192,1.25,1.875,12000,days since 0850-01-01,proleptic_gregorian,zarr,,/home1/julieneg/common_data/common/PMIP4_data/zarr/ACCESS-ESM1-5/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr,ACCESS-ESM1-5,"ACCESS-ESM1.5 (2019): 
+aerosol: CLASSIC (v1.0)
+atmos: HadGAM2 (r1.1, N96; 192 x 145 longitude/latitude; 38 levels; top level 39255 m)
+atmosChem: none
+land: CABLE2.4
+landIce: none
+ocean: ACCESS-OM2 (MOM5, tripolar primarily 1deg; 360 x 300 longitude/latitude; 50 levels; top grid cell 0-10 m)
+ocnBgchem: WOMBAT (same grid as ocean)
+seaIce: CICE4.1 (same grid as ocean)",CSIRO,"Commonwealth Scientific and Industrial Research Organisation, Aspendale, Victoria 3195, Australia",access_csiro@csiro.au,r1i1p1f1,1,1,1,1,past1000,gn,250 km,https://furtherinfo.es-doc.org/CMIP6.CSIRO.ACCESS-ESM1-5.past1000.none.r1i1p1f1,hdl:21.14100/fc060921-2e77-45e2-88d9-02debf13453c,CF-1.7 CMIP-6.2,no parent,no parent,no parent,"PMIP4 ACCESS-ESM1-5 past1000 r1i1p1f1 monthly tas, uncorrected"
+pmip4_EC-Earth3-Veg-LR,EC-Earth3-Veg-LR,tas,K,Near-Surface Air Temperature,162,320,1.107,1.125,12012,days since 0850-01-01,proleptic_gregorian,zarr,,/home1/julieneg/common_data/common/PMIP4_data/zarr/EC-Earth3-Veg-LR/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr,EC-Earth3-Veg-LR,"EC-Earth3-Veg-LR (2022): 
+aerosol: none
+atmos: IFS cy36r4 (TL159, linearly reduced Gaussian grid equivalent to 320 x 160 longitude/latitude; 62 levels; top level 5 hPa)
+atmosChem: none
+land: HTESSEL (land surface scheme built in IFS) and LPJ-GUESS v4
+landIce: none
+ocean: NEMO3.6 (ORCA1 tripolar primarily 1 degree with meridional refinement down to 1/3 degree in the tropics; 362 x 292 longitude/latitude; 75 levels; top grid cell 0-1 m)
+ocnBgchem: none
+seaIce: LIM3",EC-Earth-Consortium,"AEMET, Spain; BSC, Spain; CNR-ISAC, Italy; DMI, Denmark; ENEA, Italy; FMI, Finland; Geomar, Germany; ICHEC, Ireland; ICTP, Italy; IDL, Portugal; IMAU, The Netherlands; IPMA, Portugal; KIT, Karlsruhe, Germany; KNMI, The Netherlands; Lund University, Sweden; Met Eireann, Ireland; NLeSC, The Netherlands; NTNU, Norway; Oxford University, UK; surfSARA, The Netherlands; SMHI, Sweden; Stockholm University, Sweden; Unite ASTR, Belgium; University College Dublin, Ireland; University of Bergen, Norway; University of Copenhagen, Denmark; University of Helsinki, Finland; University of Santiago de Compostela, Spain; Uppsala University, Sweden; Utrecht University, The Netherlands; Vrije Universiteit Amsterdam, the Netherlands; Wageningen University, The Netherlands. Mailing address: EC-Earth consortium, Rossby Center, Swedish Meteorological and Hydrological Institute/SMHI, SE-601 76 Norrkoping, Sweden",cmip6-data@ec-earth.org,r1i1p1f1,1,1,1,1,past1000,gr,100 km,https://furtherinfo.es-doc.org/CMIP6.EC-Earth-Consortium.EC-Earth3-Veg-LR.past1000.none.r1i1p1f1,hdl:21.14100/09d22263-7a3e-4730-838d-da83271968db,CF-1.7 CMIP-6.2,no parent,no parent,no parent,PMIP4 EC-Earth3-Veg-LR past1000 r1i1p1f1 monthly tas
+pmip4_INM-CM4-8,INM-CM4-8,tas,K,Near-Surface Air Temperature,120,180,1.5,2.0,11988,days since 0850-01-01,365_day,zarr,,/home1/julieneg/common_data/common/PMIP4_data/zarr/INM-CM4-8/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr,INM-CM4-8,"INM-CM4-8 (2016): 
+aerosol: INM-AER1
+atmos: INM-AM4-8 (2x1.5; 180 x 120 longitude/latitude; 21 levels; top level sigma = 0.01)
+atmosChem: none
+land: INM-LND1
+landIce: none
+ocean: INM-OM5 (North Pole shifted to 60N, 90E; 360 x 318 longitude/latitude; 40 levels; sigma vertical coordinate)
+ocnBgchem: none
+seaIce: INM-ICE1",INM,"Institute for Numerical Mathematics, Russian Academy of Science, Moscow 119991, Russia",Evgeny Volodin (volodinev@gmail.com),r1i1p1f1,1,1,1,1,past1000,gr1,100 km,https://furtherinfo.es-doc.org/CMIP6.INM.INM-CM4-8.past1000.none.r1i1p1f1,hdl:21.14100/4f017185-9e39-4eed-a0e9-e7748525b4af,CF-1.7 CMIP-6.2,no parent,no parent,no parent,PMIP4 INM-CM4-8 past1000 r1i1p1f1 monthly tas
+pmip4_MIROC-ES2L,MIROC-ES2L,tas,K,Near-Surface Air Temperature,64,128,2.789,2.812,12000,days since 0850-01-01,proleptic_gregorian,zarr,,/home1/julieneg/common_data/common/PMIP4_data/zarr/MIROC-ES2L/past1000/r1i1p1f2/Amon/tas/tas_raw.zarr,MIROC-ES2L,"MIROC-ES2L (2018): 
+aerosol: SPRINTARS6.0
+atmos: CCSR AGCM (T42; 128 x 64 longitude/latitude; 40 levels; top level 3 hPa)
+atmosChem: none
+land: MATSIRO6.0+VISIT-e ver.1.0
+landIce: none
+ocean: COCO4.9 (tripolar primarily 1deg; 360 x 256 longitude/latitude; 63 levels; top grid cell 0-2 m)
+ocnBgchem: OECO ver.2.0; NPZD-type with C/N/P/Fe/O cycles
+seaIce: COCO4.9",MIROC,"JAMSTEC (Japan Agency for Marine-Earth Science and Technology, Kanagawa 236-0001, Japan), AORI (Atmosphere and Ocean Research Institute, The University of Tokyo, Chiba 277-8564, Japan), NIES (National Institute for Environmental Studies, Ibaraki 305-8506, Japan), and R-CCS (RIKEN Center for Computational Science, Hyogo 650-0047, Japan)",,r1i1p1f2,1,1,1,2,past1000,gn,500 km,https://furtherinfo.es-doc.org/CMIP6.MIROC.MIROC-ES2L.past1000.none.r1i1p1f2,hdl:21.14100/cde0a33d-75b0-497a-9c6d-f1108bdf5050,CF-1.7 CMIP-6.2,,no parent,,PMIP4 MIROC-ES2L past1000 r1i1p1f2 monthly tas
+pmip4_MPI-ESM1-2-LR,MPI-ESM1-2-LR,tas,K,Near-Surface Air Temperature,96,192,1.865,1.875,22200,days since 1850-01-01,proleptic_gregorian,zarr,,/home1/julieneg/common_data/common/PMIP4_data/zarr/MPI-ESM1-2-LR/past2k/r1i1p1f1/Amon/tas/tas_raw.zarr,MPI-ESM1-2-LR,"MPI-ESM1.2-LR (2017): 
+aerosol: none, prescribed MACv2-SP
+atmos: ECHAM6.3 (spectral T63; 192 x 96 longitude/latitude; 47 levels; top level 0.01 hPa)
+atmosChem: none
+land: JSBACH3.20
+landIce: none/prescribed
+ocean: MPIOM1.63 (bipolar GR1.5, approximately 1.5deg; 256 x 220 longitude/latitude; 40 levels; top grid cell 0-12 m)
+ocnBgchem: HAMOCC6
+seaIce: unnamed (thermodynamic (Semtner zero-layer) dynamic (Hibler 79) sea ice model)",MPI-M,"Max Planck Institute for Meteorology, Hamburg 20146, Germany",cmip6-mpi-esm@dkrz.de,r1i1p1f1,1,1,1,1,past2k,gn,250 km,https://furtherinfo.es-doc.org/CMIP6.MPI-M.MPI-ESM1-2-LR.past2k.none.r1i1p1f1,hdl:21.14100/03ca260c-951f-484e-b0d0-ce7d31509f84,CF-1.7 CMIP-6.2,no parent,no parent,no parent,PMIP4 MPI-ESM1-2-LR past2k r1i1p1f1 monthly tas
+pmip4_MRI-ESM2-0,MRI-ESM2-0,tas,K,Near-Surface Air Temperature,160,320,1.121,1.125,12000,days since 0850-01-01,proleptic_gregorian,zarr,,/home1/julieneg/common_data/common/PMIP4_data/zarr/MRI-ESM2-0/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr,MRI-ESM2-0,"MRI-ESM2.0 (2017): 
+aerosol: MASINGAR mk2r4 (TL95; 192 x 96 longitude/latitude; 80 levels; top level 0.01 hPa)
+atmos: MRI-AGCM3.5 (TL159; 320 x 160 longitude/latitude; 80 levels; top level 0.01 hPa)
+atmosChem: MRI-CCM2.1 (T42; 128 x 64 longitude/latitude; 80 levels; top level 0.01 hPa)
+land: HAL 1.0
+landIce: none
+ocean: MRI.COM4.4 (tripolar primarily 0.5 deg latitude/1 deg longitude with meridional refinement down to 0.3 deg within 10 degrees north and south of the equator; 360 x 364 longitude/latitude; 61 levels; top grid cell 0-2 m)
+ocnBgchem: MRI.COM4.4
+seaIce: MRI.COM4.4",MRI,"Meteorological Research Institute, Tsukuba, Ibaraki 305-0052, Japan",,r1i1p1f1,1,1,1,1,past1000,gn,100 km,https://furtherinfo.es-doc.org/CMIP6.MRI.MRI-ESM2-0.past1000.none.r1i1p1f1,hdl:21.14100/39c0dcbe-e36a-4fae-900b-67b0874f5996,CF-1.7 CMIP-6.2,,,,PMIP4 MRI-ESM2-0 past1000 r1i1p1f1 monthly tas
+pmip4_iCESM,iCESM,tas,K,Reference height temperature,96,144,1.895,2.5,13872,days since 0850-01-01 00:00:00,noleap,netcdf-single,,/home1/julieneg/common_data/common/PMIP4_data/netCDF/iCESM/tas_sfc_Amon_iCESM_past1000historical_085001-200512.nc,,,,,,,,,,,,,,,,,,,,iCESM past1000+historical combined monthly tas NetCDF (850–2005 CE)
+pmip4_CESM1.1,CESM1.1,TREFHT,K,Reference height temperature,96,144,1.895,2.5,1188,days since 0001-01-01 00:00:00,noleap,netcdf-multi,21,/home1/julieneg/common_data/common/PMIP4_data/netCDF/CESM1.1,,CAM,,,,,,,,,,,,,,CF-1.0,,,,CESM1.1 PMIP4 past1000 monthly TREFHT in native CAM NetCDF format (HPC only)
+pmip4_CESM2,CESM2,TREFHT,K,Reference height temperature,96,144,1.895,2.5,12000,days since 0850-01-01,noleap,netcdf-single,,/home1/julieneg/common_data/common/PMIP4_data/netCDF/CESM2/corrected/TREFHT_Amon_CESM2_past1000_run002_1850corrected.nc,,CAM,,,,,,,,,,,,,,CF-1.0,,,,"CESM2 PMIP4 past1000 run002 monthly TREFHT (850–1849 CE), linear-detrend corrected for the past1000.002 volcanic-background drift artifact (code/apply_1850_adjustments.py)"
+raw_pmip4_CESM2,pmip4_CESM2,TREFHT,K,Reference height temperature,96,144,1.895,2.5,600,days since 0850-01-01 00:00:00,noleap,netcdf-multi,20,/home1/julieneg/common_data/common/PMIP4_data/netCDF/CESM2,,CAM,,,,,,,,,,,,,,CF-1.0,,,,"CESM2 PMIP4 past1000 run002 monthly TREFHT in native CAM NetCDF format (850–1849 CE), uncorrected"
+cmip_hist_CESM2,hist_CESM2,tas,K,Near-Surface Air Temperature,192,288,0.942,1.25,600,days since 0001-01-01 00:00:00,noleap,netcdf-multi,4,/home1/julieneg/common_data/common/CMIP_hist_data/netCDF/NCAR/CESM2/historical/r11i1p1f1/Amon/tas/gn/v20190514,CESM2,CESM2 (2017): atmosphere: CAM6 (0.9x1.25 finite volume grid; 288 x 192 longitude/latitude; 32 levels; top level 2.25 mb); ocean: POP2 (320x384 longitude/latitude; 60 levels; top grid cell 0-10 m); sea_ice: CICE5.1 (same grid as ocean); land: CLM5 0.9x1.25 finite volume grid; 288 x 192 longitude/latitude; 32 levels; top level 2.25 mb); aerosol: MAM4 (0.9x1.25 finite volume grid; 288 x 192 longitude/latitude; 32 levels; top level 2.25 mb); atmoschem: MAM4 (0.9x1.25 finite volume grid; 288 x 192 longitude/latitude; 32 levels; top level 2.25 mb); landIce: CISM2.1; ocnBgchem: MARBL (320x384 longitude/latitude; 60 levels; top grid cell 0-10 m),NCAR,"National Center for Atmospheric Research, Climate and Global Dynamics Laboratory, 1850 Table Mesa Drive, Boulder, CO 80305, USA",cesm_cmip6@ucar.edu,r11i1p1f1,11,1,1,1,historical,gn,100 km,https://furtherinfo.es-doc.org/CMIP6.NCAR.CESM2.historical.none.r11i1p1f1,hdl:21.14100/a7278f6d-6a1b-4050-8f06-a8033604736a,CF-1.7 CMIP-6.2,CESM2,piControl,r1i1p1f1,"CESM2 CMIP6 historical r11i1p1f1 monthly tas NetCDF directory (1850–2014, 4 files)"
+cmip_hist_ACCESS-ESM1-5,hist_ACCESS-ESM1-5,tas,K,Near-Surface Air Temperature,145,192,1.25,1.875,1980,days since 1850-01-01,proleptic_gregorian,zarr,,/home1/julieneg/common_data/common/CMIP_hist_data/zarr/ACCESS-ESM1-5/tas_raw.zarr,ACCESS-ESM1-5,"ACCESS-ESM1.5 (2019): 
+aerosol: CLASSIC (v1.0)
+atmos: HadGAM2 (r1.1, N96; 192 x 145 longitude/latitude; 38 levels; top level 39255 m)
+atmosChem: none
+land: CABLE2.4
+landIce: none
+ocean: ACCESS-OM2 (MOM5, tripolar primarily 1deg; 360 x 300 longitude/latitude; 50 levels; top grid cell 0-10 m)
+ocnBgchem: WOMBAT (same grid as ocean)
+seaIce: CICE4.1 (same grid as ocean)",CSIRO,"Commonwealth Scientific and Industrial Research Organisation, Aspendale, Victoria 3195, Australia",,r1i1p1f1,1,1,1,1,historical,gn,250 km,https://furtherinfo.es-doc.org/CMIP6.CSIRO.ACCESS-ESM1-5.historical.none.r1i1p1f1,hdl:21.14100/d2debfa6-c0e2-4339-bac8-08d97867ae3a,CF-1.7 CMIP-6.2,ACCESS-ESM1-5,piControl,r1i1p1f1,CMIP6 ACCESS-ESM1-5 historical monthly tas (1850–2014)
+cmip_hist_EC-Earth3-Veg-LR,hist_EC-Earth3-Veg-LR,tas,K,Near-Surface Air Temperature,160,320,1.121,1.125,1980,days since 1850-01-01,proleptic_gregorian,zarr,,/home1/julieneg/common_data/common/CMIP_hist_data/zarr/EC-Earth3-Veg-LR/tas_raw.zarr,EC-Earth3-Veg-LR,"EC-Earth3-Veg-LR (2019): 
+aerosol: none
+atmos: IFS cy36r4 (TL159, linearly reduced Gaussian grid equivalent to 320 x 160 longitude/latitude; 62 levels; top level 5 hPa)
+atmosChem: none
+land: HTESSEL (land surface scheme built in IFS) and LPJ-GUESS v4
+landIce: none
+ocean: NEMO3.6 (ORCA1 tripolar primarily 1 degree with meridional refinement down to 1/3 degree in the tropics; 362 x 292 longitude/latitude; 75 levels; top grid cell 0-1 m)
+ocnBgchem: none
+seaIce: LIM3",EC-Earth-Consortium,"AEMET, Spain; BSC, Spain; CNR-ISAC, Italy; DMI, Denmark; ENEA, Italy; FMI, Finland; Geomar, Germany; ICHEC, Ireland; ICTP, Italy; IDL, Portugal; IMAU, The Netherlands; IPMA, Portugal; KIT, Karlsruhe, Germany; KNMI, The Netherlands; Lund University, Sweden; Met Eireann, Ireland; NLeSC, The Netherlands; NTNU, Norway; Oxford University, UK; surfSARA, The Netherlands; SMHI, Sweden; Stockholm University, Sweden; Unite ASTR, Belgium; University College Dublin, Ireland; University of Bergen, Norway; University of Copenhagen, Denmark; University of Helsinki, Finland; University of Santiago de Compostela, Spain; Uppsala University, Sweden; Utrecht University, The Netherlands; Vrije Universiteit Amsterdam, the Netherlands; Wageningen University, The Netherlands. Mailing address: EC-Earth consortium, Rossby Center, Swedish Meteorological and Hydrological Institute/SMHI, SE-601 76 Norrkoping, Sweden",cmip6-data@ec-earth.org,r1i1p1f1,1,1,1,1,historical,gr,250 km,https://furtherinfo.es-doc.org/CMIP6.EC-Earth-Consortium.EC-Earth3-Veg-LR.historical.none.r1i1p1f1,hdl:21.14100/6c09483e-fbd7-4ea4-818a-f12b6fcba5b4,CF-1.7 CMIP-6.2,EC-Earth3-Veg-LR,piControl,r1i1p1f1,CMIP6 EC-Earth3-Veg-LR historical monthly tas (1850–2014)
+cmip_hist_INM-CM4-8,hist_INM-CM4-8,tas,K,Near-Surface Air Temperature,120,180,1.5,2.0,1980,days since 1850-01-01,365_day,zarr,,/home1/julieneg/common_data/common/CMIP_hist_data/zarr/INM-CM4-8/tas_raw.zarr,INM-CM4-8,"INM-CM4-8 (2016): 
+aerosol: INM-AER1
+atmos: INM-AM4-8 (2x1.5; 180 x 120 longitude/latitude; 21 levels; top level sigma = 0.01)
+atmosChem: none
+land: INM-LND1
+landIce: none
+ocean: INM-OM5 (North Pole shifted to 60N, 90E; 360 x 318 longitude/latitude; 40 levels; sigma vertical coordinate)
+ocnBgchem: none
+seaIce: INM-ICE1",INM,"Institute for Numerical Mathematics, Russian Academy of Science, Moscow 119991, Russia",Evgeny Volodin (volodinev@gmail.com),r1i1p1f1,1,1,1,1,historical,gr1,100 km,https://furtherinfo.es-doc.org/CMIP6.INM.INM-CM4-8.historical.none.r1i1p1f1,hdl:21.14100/87389b71-58c4-4875-af43-dd7ea32a8f9f,CF-1.7 CMIP-6.2,INM-CM4-8,piControl,r1i1p1f1,CMIP6 INM-CM4-8 historical monthly tas (1850–2014)
+cmip_hist_MIROC-ES2L,hist_MIROC-ES2L,tas,K,Near-Surface Air Temperature,64,128,2.789,2.812,1980,days since 1850-1-1,gregorian,netcdf-single,,/home1/julieneg/common_data/common/CMIP_hist_data/netCDF/MIROC/MIROC-ES2L/historical/r1i1000p1f2/Amon/tas/gn/v20210107/tas_Amon_MIROC-ES2L_historical_r1i1000p1f2_gn_185001-201412.nc,MIROC-ES2L,"MIROC-ES2L (2018): 
+aerosol: SPRINTARS6.0
+atmos: CCSR AGCM (T42; 128 x 64 longitude/latitude; 40 levels; top level 3 hPa)
+atmosChem: none
+land: MATSIRO6.0+VISIT-e ver.1.0
+landIce: none
+ocean: COCO4.9 (tripolar primarily 1deg; 360 x 256 longitude/latitude; 63 levels; top grid cell 0-2 m)
+ocnBgchem: OECO ver.2.0; NPZD-type with C/N/P/Fe/O cycles
+seaIce: COCO4.9",MIROC,"JAMSTEC (Japan Agency for Marine-Earth Science and Technology, Kanagawa 236-0001, Japan), AORI (Atmosphere and Ocean Research Institute, The University of Tokyo, Chiba 277-8564, Japan), NIES (National Institute for Environmental Studies, Ibaraki 305-8506, Japan), and R-CCS (RIKEN Center for Computational Science, Hyogo 650-0047, Japan)",,r1i1000p1f2,1,1000,1,2,historical,gn,500 km,https://furtherinfo.es-doc.org/CMIP6.MIROC.MIROC-ES2L.historical.none.r1i1000p1f2,hdl:21.14100/225a3116-0460-46ae-b630-8bea7c931ced,CF-1.7 CMIP-6.2,MIROC-ES2L,piControl,r1i1p1f2,"CMIP6 MIROC-ES2L historical r1i1000p1f2 monthly tas (1850–2014) — branched from the actual past1000/past2k Dec-1849 restart, replacing the PiControl-branched r1i1p1f1 member"
+cmip_hist_MPI-ESM1-2-LR,hist_MPI-ESM1-2-LR,tas,K,Near-Surface Air Temperature,96,192,1.865,1.875,1980,days since 1850-01-01,proleptic_gregorian,zarr,,/home1/julieneg/common_data/common/CMIP_hist_data/zarr/MPI-ESM1-2-LR/tas_raw.zarr,MPI-ESM1-2-LR,"MPI-ESM1.2-LR (2017): 
+aerosol: none, prescribed MACv2-SP
+atmos: ECHAM6.3 (spectral T63; 192 x 96 longitude/latitude; 47 levels; top level 0.01 hPa)
+atmosChem: none
+land: JSBACH3.20
+landIce: none/prescribed
+ocean: MPIOM1.63 (bipolar GR1.5, approximately 1.5deg; 256 x 220 longitude/latitude; 40 levels; top grid cell 0-12 m)
+ocnBgchem: HAMOCC6
+seaIce: unnamed (thermodynamic (Semtner zero-layer) dynamic (Hibler 79) sea ice model)",MPI-M,"Max Planck Institute for Meteorology, Hamburg 20146, Germany",cmip6-mpi-esm@dkrz.de,r1i1p1f1,1,1,1,1,historical,gn,250 km,https://furtherinfo.es-doc.org/CMIP6.MPI-M.MPI-ESM1-2-LR.historical.none.r1i1p1f1,hdl:21.14100/6b679cba-17b8-45eb-90dc-23d170c1998c,CF-1.7 CMIP-6.2,MPI-ESM1-2-LR,piControl,r1i1p1f1,CMIP6 MPI-ESM1-2-LR historical monthly tas (1850–2014)
+cmip_hist_MRI-ESM2-0,hist_MRI-ESM2-0,tas,K,Near-Surface Air Temperature,160,320,1.121,1.125,1980,days since 0850-01-01,proleptic_gregorian,netcdf-single,,/home1/julieneg/common_data/common/CMIP_hist_data/netCDF/MRI/MRI-ESM2-0/historical/r1i1000p1f1/Amon/tas/gn/v20201029/tas_Amon_MRI-ESM2-0_historical_r1i1000p1f1_gn_185001-201412.nc,MRI-ESM2-0,"MRI-ESM2.0 (2017): 
+aerosol: MASINGAR mk2r4 (TL95; 192 x 96 longitude/latitude; 80 levels; top level 0.01 hPa)
+atmos: MRI-AGCM3.5 (TL159; 320 x 160 longitude/latitude; 80 levels; top level 0.01 hPa)
+atmosChem: MRI-CCM2.1 (T42; 128 x 64 longitude/latitude; 80 levels; top level 0.01 hPa)
+land: HAL 1.0
+landIce: none
+ocean: MRI.COM4.4 (tripolar primarily 0.5 deg latitude/1 deg longitude with meridional refinement down to 0.3 deg within 10 degrees north and south of the equator; 360 x 364 longitude/latitude; 61 levels; top grid cell 0-2 m)
+ocnBgchem: MRI.COM4.4
+seaIce: MRI.COM4.4",MRI,"Meteorological Research Institute, Tsukuba, Ibaraki 305-0052, Japan",,r1i1000p1f1,1,1000,1,1,historical,gn,100 km,https://furtherinfo.es-doc.org/CMIP6.MRI.MRI-ESM2-0.historical.none.r1i1000p1f1,hdl:21.14100/34f57bf7-16eb-4d40-8f01-2e669ec859e4,CF-1.7 CMIP-6.2,MRI-ESM2-0,piControl,r1i1p1f1,"CMIP6 MRI-ESM2-0 historical r1i1000p1f1 monthly tas (1850–2014) — branched from the actual past1000/past2k Dec-1849 restart, replacing the PiControl-branched r1i1p1f1 member"
