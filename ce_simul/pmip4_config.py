@@ -84,6 +84,47 @@ def get_pmip4_models(config):
     return dict(sorted(models.items(), key=lambda x: x[0].lower()))
 
 
+# Per-model color overrides, applied on top of the tab10 assignment in
+# get_model_colors() below. MPI-ESM1-2-LR's tab10 slot (index 7) is gray,
+# which reads poorly / collides with gray-toned "individual observation"
+# elements in several figures (e.g. ce_val's borehole stack plots), so it is
+# fixed to black everywhere a per-model color is assigned from this registry.
+MODEL_COLOR_OVERRIDES = {
+    'MPI-ESM1-2-LR': 'black',
+}
+
+
+def get_model_colors(config, corrected: bool = True):
+    """Return {display_name: color} for every registered PMIP4 model.
+
+    Colors are tab10, cycled over the raw model names in alphabetical
+    (case-insensitive) order -- the same assignment used by
+    code/PMIP4_1850_stitch.ipynb's "Full time series" figure and
+    code/plot_Antarctic_BH_surface_temp.py -- so a given model reads as the
+    same color in every figure across this project and ce_val, except for
+    the fixed overrides in MODEL_COLOR_OVERRIDES. Keyed by display_name (see
+    `display_name()`) so corrected models (e.g. CESM2c) get their raw
+    model's color under their display label.
+
+    Parameters
+    ----------
+    config : DataConfig
+        Used to auto-discover the registered models (see get_pmip4_models).
+    corrected : bool, optional
+        Passed through to `display_name()`. Default True.
+    """
+    import matplotlib.pyplot as plt
+
+    raw_models = list(get_pmip4_models(config))
+    tab10 = plt.get_cmap('tab10').colors
+    colors = {
+        display_name(raw, corrected=corrected): tab10[i % len(tab10)]
+        for i, raw in enumerate(raw_models)
+    }
+    colors.update(MODEL_COLOR_OVERRIDES)
+    return colors
+
+
 def get_cmip_hist_models(config):
     """Return {model: path} dict for available CMIP6 historical runs, auto-discovered from data_config.yml.
 

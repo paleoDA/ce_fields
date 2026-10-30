@@ -35,25 +35,21 @@ from matplotlib.lines import Line2D
 
 sys.path.insert(0, '..')
 from ce_simul.data_config import DataConfig
-from ce_simul.pmip4_config import get_pmip4_models, display_name
+from ce_simul.pmip4_config import get_model_colors
 
 DATA_FOLDER = Path('../results/data')
 FIGURE_FOLDER = Path('../results/figures')
 FIGURE_FOLDER.mkdir(parents=True, exist_ok=True)
 
 # =============================================================================
-# COLORS — same per-model tab10 assignment as PMIP4_1850_stitch.ipynb's
-# "Full time series" figure (alphabetical, case-insensitive order over the
-# raw model names). Keyed by display_name so corrected models (e.g. CESM2c)
-# get their raw model's color.
+# COLORS — canonical per-model registry (ce_simul.pmip4_config.get_model_colors):
+# tab10 cycled alphabetically over the raw model names, keyed by display_name
+# so corrected models (e.g. CESM2c) get their raw model's color, with
+# MPI-ESM1-2-LR fixed to black (MODEL_COLOR_OVERRIDES) so it reads the same
+# way in every figure across this project and ce_val.
 # =============================================================================
 config = DataConfig()
-raw_models = list(get_pmip4_models(config))
-tab10 = plt.get_cmap('tab10').colors
-MODEL_COLORS = {
-    display_name(raw, corrected=True): tab10[i % len(tab10)]
-    for i, raw in enumerate(raw_models)
-}
+MODEL_COLORS = get_model_colors(config)
 
 # =============================================================================
 # LOAD
