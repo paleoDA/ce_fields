@@ -45,6 +45,7 @@ dependencies = [
     "PyYAML>=5.4.0",
     "fsspec",
     "tqdm",
+    "dask",
 ]
 
 [project.optional-dependencies]
@@ -52,7 +53,6 @@ scripts = [
     "matplotlib>=3.4.0",
     "scipy>=1.7.0",
     "tqdm",
-    "dask",
 ]
 regrid = [
     "xesmf",
