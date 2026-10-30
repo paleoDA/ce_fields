@@ -36,7 +36,7 @@ def regrid_conservative(
     """Conservatively regrid ``source_da`` onto a (target_lat, target_lon) grid.
 
     Uses xESMF (install via the ``regrid`` extra: ``pip install
-    ce-simul[regrid]``, or ``conda install -c conda-forge xesmf esmpy``);
+    ce-fields[regrid]``, or ``conda install -c conda-forge xesmf esmpy``);
     cell bounds are inferred on the fly via ``_cell_bounds`` since these are
     simple rectilinear atmosphere grids without their own bounds variables.
     Assumes a periodic (global, wrap-around) longitude axis, true of every

@@ -43,10 +43,10 @@ import numpy as np
 import xarray as xr
 
 sys.path.insert(0, '..')
-from ce_simul.data_config import DataConfig
-from ce_simul.io import open_nc_or_zarr
-from ce_simul.pmip4_config import get_pmip4_models, MODEL_VAR
-from ce_simul.products import CFTIME_CODER
+from ce_fields.data_config import DataConfig
+from ce_fields.io import open_nc_or_zarr
+from ce_fields.pmip4_config import get_pmip4_models, MODEL_VAR
+from ce_fields.products import CFTIME_CODER
 
 MODEL = 'CESM2'
 WAIS_LAT, WAIS_LON = -79 - 28/60, 360 - (112 + 5/60)
@@ -88,7 +88,7 @@ def inspect(label, path):
 inspect('CORRECTED (data_config pmip4_CESM2)', pmip4_models[MODEL])
 
 try:
-    from ce_simul.data_config import DataConfig as _DC
+    from ce_fields.data_config import DataConfig as _DC
     raw_path = config.get_file_path('raw_pmip4_CESM2')
     inspect('RAW (pre-correction, data_config raw_pmip4_CESM2)', raw_path)
 except KeyError as e:

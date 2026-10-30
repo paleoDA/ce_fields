@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ce-simul"
-version = "0.1.0"
-description = "Loading, stitching, and bias-correcting PMIP4 past1000/past2k and CMIP6-historical simulations"
+name = "ce-fields"
+version = "0.2.0"
+description = "Simulated (PMIP4/CMIP6) and reconstructed (LMR, Neukom et al. 2019) Common Era climate fields"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
@@ -20,6 +20,8 @@ keywords = [
     "paleoclimate",
     "PMIP4",
     "CMIP6",
+    "LMR",
+    "reconstructions",
     "common era",
 ]
 classifiers = [
@@ -41,6 +43,8 @@ dependencies = [
     "zarr",
     "cftime",
     "PyYAML>=5.4.0",
+    "fsspec",
+    "tqdm",
 ]
 
 [project.optional-dependencies]
@@ -60,12 +64,12 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/paleoDA/ce_simul"
-Repository = "https://github.com/paleoDA/ce_simul"
-Issues = "https://github.com/paleoDA/ce_simul/issues"
+Homepage = "https://github.com/paleoDA/ce_fields"
+Repository = "https://github.com/paleoDA/ce_fields"
+Issues = "https://github.com/paleoDA/ce_fields/issues"
 
 [tool.setuptools]
-packages = ["ce_simul"]
+packages = ["ce_fields"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

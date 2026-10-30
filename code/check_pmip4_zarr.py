@@ -35,8 +35,8 @@ dask.config.set(scheduler='synchronous')
 
 # ── locate package regardless of working directory ──────────────────────────
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from ce_simul.data_config import DataConfig
-from ce_simul.pmip4_config import get_pmip4_models
+from ce_fields.data_config import DataConfig
+from ce_fields.pmip4_config import get_pmip4_models
 
 # ── configuration ────────────────────────────────────────────────────────────
 REF_PERIOD = (1961, )

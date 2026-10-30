@@ -13,7 +13,7 @@ module purge
 eval "$(conda shell.bash hook)"
 conda activate linkedearth
 
-# Submit from the ce_simul repo root: sbatch code/PMIP4_GMST_seasonal.sh
+# Submit from the ce_fields repo root: sbatch code/PMIP4_GMST_seasonal.sh
 # (under sbatch, $0 points to Slurm's spool copy, so cd to the submit dir instead)
 cd "${SLURM_SUBMIT_DIR:-.}"
 python code/PMIP4_GMST_seasonal.py

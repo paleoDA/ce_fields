@@ -1,4 +1,4 @@
-"""Tests for ce_simul.io.stitch_annual_tas"""
+"""Tests for ce_fields.io.stitch_annual_tas"""
 import sys
 import types
 
@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from ce_simul.io import stitch_annual_tas, regrid_conservative, _cell_bounds
+from ce_fields.io import stitch_annual_tas, regrid_conservative, _cell_bounds
 
 
 def _make_da(years, val=0.0):

@@ -4,7 +4,7 @@ apply_1850_adjustments.py
 One-off migration script: apply the pre-1850 stitch corrections derived in
 PMIP4_1850_stitch.ipynb to the raw monthly paleo data for the two models
 that need one, and write a corrected version of those netCDF files back
-into the PMIP4 archive — so downstream code (ce_simul.products) never has
+into the PMIP4 archive — so downstream code (ce_fields.products) never has
 to correct these again; it just reads the archive as-is.
 
 Background
@@ -41,9 +41,9 @@ import pandas as pd
 import xarray as xr
 
 sys.path.insert(0, '..')
-from ce_simul.data_config import DataConfig
-from ce_simul.pmip4_config import MODEL_VAR
-from ce_simul.io import open_nc_or_zarr
+from ce_fields.data_config import DataConfig
+from ce_fields.pmip4_config import MODEL_VAR
+from ce_fields.io import open_nc_or_zarr
 
 CFTIME_CODER = xr.coders.CFDatetimeCoder(use_cftime=True)
 GMST_ANOMALIES_CSV = Path('../results/tables/PMIP4_GMST_anomalies.csv')

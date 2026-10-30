@@ -17,7 +17,7 @@ averaging or stitching, so the paleo/historical grid mismatch that
 stitch_annual_tas() has to regrid (CESM2) is irrelevant here. Otherwise the
 paleo-run handling (corrected files, YEAR_OFFSETS, TRIM_END, incomplete-year
 drop, STITCH_THRESHOLD, 1-year-overlap rule) mirrors
-ce_simul.products.load_stitched_tas().
+ce_fields.products.load_stitched_tas().
 
 Monthly time stamps: CMORized output stamps months mid-month, but native CAM
 output (CESM*) stamps each month at its *end* (January -> Feb 1), which would
@@ -52,9 +52,9 @@ import xarray as xr
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
-from ce_simul.data_config import DataConfig
-from ce_simul.io import open_nc_or_zarr
-from ce_simul.pmip4_config import (get_pmip4_models, get_cmip_hist_models,
+from ce_fields.data_config import DataConfig
+from ce_fields.io import open_nc_or_zarr
+from ce_fields.pmip4_config import (get_pmip4_models, get_cmip_hist_models,
                                     MODEL_VAR, YEAR_OFFSETS, TRIM_END, STITCH_THRESHOLD)
 
 CFTIME_CODER = xr.coders.CFDatetimeCoder(use_cftime=True)
@@ -135,7 +135,7 @@ def drop_incomplete_years(df, label):
 
 def stitched_monthly_gmst(name, pmip4_models, cmip_hist_models):
     """Monthly GMST for one model, with the same paleo handling + stitch rules as
-    ce_simul.products.load_stitched_tas()."""
+    ce_fields.products.load_stitched_tas()."""
     var = MODEL_VAR.get(name, 'tas')
     df, attrs, rule = monthly_gmst(pmip4_models[name], var, f'{name} (paleo)')
     all_attrs = {'paleo': attrs}

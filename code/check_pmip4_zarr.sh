@@ -11,7 +11,7 @@
 
 module purge
 eval "$(conda shell.bash hook)"
-conda activate snakemake3          # update if the ce_simul environment has a different name
+conda activate snakemake3          # update if the ce_fields environment has a different name
 
 cd "$(dirname "$0")/.."            # run from the repo root
 python scripts/check_pmip4_zarr.py

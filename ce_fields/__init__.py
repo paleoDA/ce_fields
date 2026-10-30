@@ -1,4 +1,4 @@
-# ce_simul package
+# ce_fields package
 
 from .data_config import DataConfig
 from .pmip4_config import get_pmip4_models, get_cmip_hist_models, CORRECTED_MODELS, display_name

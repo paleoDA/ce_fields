@@ -19,10 +19,10 @@ Needs the real PMIP4 data mounted (HPC only). Run from the code/ directory:
 import sys
 
 sys.path.insert(0, '..')
-from ce_simul.data_config import DataConfig
-from ce_simul.io import open_nc_or_zarr
-from ce_simul.pmip4_config import get_pmip4_models, get_cmip_hist_models
-from ce_simul.products import CFTIME_CODER
+from ce_fields.data_config import DataConfig
+from ce_fields.io import open_nc_or_zarr
+from ce_fields.pmip4_config import get_pmip4_models, get_cmip_hist_models
+from ce_fields.products import CFTIME_CODER
 
 MODEL = 'CESM2'
 config = DataConfig()

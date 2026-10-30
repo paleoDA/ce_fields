@@ -1,20 +1,23 @@
-# Data configuration file for ce_simul repository
+# Data configuration file for ce_fields repository: simulated (PMIP4/CMIP6)
+# and reconstructed (LMR, Neukom et al. 2019) Common Era climate fields
 environments:
   laptop:
-    root: "/Users/julieneg/Documents/GitHub/ce_simul"
+    root: "/Users/julieneg/Documents/GitHub/ce_fields"
     paths:
       results: "results"
       figures: "results/figures"
       pmip4_data: "/path/to/pmip4"  # HPC only — update if mounted locally
       cmip_hist_data: "/path/to/cmip_hist"  # HPC only — update if mounted locally
+      lmr_data: "/Users/julieneg/Documents/Science/Research/LastMillenniumReanalysis/data"
 
   hpc:
-    root: "/home1/julieneg/ce_simul"
+    root: "/home1/julieneg/ce_fields"
     paths:
       results: "results"
       figures: "results/figures"
       pmip4_data: "/home1/julieneg/common_data/common/PMIP4_data"
       cmip_hist_data: "/home1/julieneg/common_data/common/CMIP_hist_data"
+      lmr_data: "/path/to/lmr/data"  # Update this for HPC environment
 
 # File definitions
 files:
@@ -33,7 +36,7 @@ files:
   # Raw (pre-correction) counterpart of pmip4_ACCESS-ESM1-5, kept for
   # provenance/auditing. Not prefixed "pmip4_" so get_pmip4_models() doesn't
   # auto-discover it as a 10th model; load_stitched_tas(..., use_corrected=False)
-  # resolves this key directly. See ce_simul.pmip4_config.CORRECTED_MODELS.
+  # resolves this key directly. See ce_fields.pmip4_config.CORRECTED_MODELS.
   raw_pmip4_ACCESS-ESM1-5:
     path: "{pmip4_data}/zarr/ACCESS-ESM1-5/past1000/r1i1p1f1/Amon/tas/tas_raw.zarr"
     description: "PMIP4 ACCESS-ESM1-5 past1000 r1i1p1f1 monthly tas, uncorrected"
@@ -110,6 +113,71 @@ files:
   cmip_hist_MRI-ESM2-0:
     path: "{cmip_hist_data}/netCDF/MRI/MRI-ESM2-0/historical/r1i1000p1f1/Amon/tas/gn/v20201029/tas_Amon_MRI-ESM2-0_historical_r1i1000p1f1_gn_185001-201412.nc"
     description: "CMIP6 MRI-ESM2-0 historical r1i1000p1f1 monthly tas (1850–2014) — branched from the actual past1000/past2k Dec-1849 restart, replacing the PiControl-branched r1i1p1f1 member"
+
+  # Last Millennium Reanalysis (LMR) temperature field reconstructions:
+  # v2.1, Online and Seasonal. See ce_fields/lmr.py.
+  lmr_v2_1_tas_mean:
+    path: "{lmr_data}/LMRv2.1/air_MCruns_ensemble_mean_LMRv2.1.nc"
+    description: "LMR v2.1 ensemble mean spatial tas field"
+
+  lmr_v2_1_tas_spread:
+    path: "{lmr_data}/LMRv2.1/air_MCruns_ensemble_spread_LMRv2.1.nc"
+    description: "LMR v2.1 ensemble spread spatial tas field"
+
+  lmr_v2_1_gmst:
+    path: "{lmr_data}/LMRv2.1/gmt_MCruns_ensemble_full_LMRv2.1.nc"
+    description: "LMR v2.1 full GMST ensemble (time=2001, MCrun=20, members=100)"
+
+  lmr_seasonal_tas_mean:
+    path: "{lmr_data}/LMR_seasonal/ensemble_mean/tas_mean.nc"
+    description: "LMR Seasonal ensemble mean spatial tas field"
+
+  lmr_seasonal_tas_ens:
+    path: "https://atmos.uw.edu/~zilumeng/LMR_Seasonal/data/members/tas/tas_ens*.nc"
+    description: "LMR Seasonal full spatial tas ensemble (800 members) — use for BTP forward modelling"
+
+  lmr_seasonal_gmst:
+    path: "{lmr_data}/LMR_seasonal/index/GMT_ens.nc"
+    description: "LMR Seasonal GMST ensemble (800 members, 800–2000 CE quarterly)"
+
+  lmr_online_tas_mean:
+    path: "{lmr_data}/LMRonline/production_ccsm4_pagesv2_wCoral_gis_seaslinobj_online_20m20sOHC_past1000/spatial_ens_mean.nc"
+    description: "LMR Online ensemble mean spatial tas field (mean over 50 MC × 100 members)"
+
+  lmr_online_tas_spread:
+    path: "{lmr_data}/LMRonline/production_ccsm4_pagesv2_wCoral_gis_seaslinobj_online_20m20sOHC_past1000/spatial_ens_var.nc"
+    description: "LMR Online ensemble variance spatial tas field"
+
+  lmr_online_gmst:
+    path: "{lmr_data}/LMRonline/production_ccsm4_pagesv2_wCoral_gis_seaslinobj_online_20m20sOHC_past1000/tas_sfc_indices.nc"
+    description: "LMR Online GMST and regional indices (mc_iteration=50, ensemble_member=100, year=1001)"
+
+  # Neukom et al. (2019, Nature) global gridded Common Era temperature field
+  # reconstructions — six methods, each a 100-member ensemble, 5° resolution,
+  # annual (May-April) resolution, 1-2000 CE. See ce_fields/neukom.py.
+  neukom_am:
+    path: "/Users/julieneg/Documents/Science/ClimateData/Neukom_Nature2019/AM.nc"
+    description: "Neukom2019 Analog Method (AM) 100-member gridded ensemble"
+
+  neukom_cca:
+    path: "/Users/julieneg/Documents/Science/ClimateData/Neukom_Nature2019/CCA.nc"
+    description: "Neukom2019 Canonical Correlation Analysis (CCA) 100-member gridded ensemble"
+
+  neukom_cps:
+    path: "/Users/julieneg/Documents/Science/ClimateData/Neukom_Nature2019/CPS.nc"
+    description: "Neukom2019 Composite-Plus-Scale (CPS) 100-member gridded ensemble"
+
+  neukom_da:
+    path: "/Users/julieneg/Documents/Science/ClimateData/Neukom_Nature2019/DA.nc"
+    description: "Neukom2019 Data Assimilation (DA) 100-member gridded ensemble (absolute temperature, K)"
+
+  neukom_graphem:
+    path: "/Users/julieneg/Documents/Science/ClimateData/Neukom_Nature2019/GraphEM.nc"
+    description: "Neukom2019 GraphEM 100-member gridded ensemble"
+
+  neukom_pcr:
+    path: "/Users/julieneg/Documents/Science/ClimateData/Neukom_Nature2019/PCR.nc"
+    description: "Neukom2019 Principal Component Regression (PCR) 100-member gridded ensemble"
 
 # Current environment (can be overridden)
 current_environment: "laptop"

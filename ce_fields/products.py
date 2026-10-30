@@ -17,7 +17,7 @@ accept `use_corrected` to pick the corrected (default) or raw variant for
 those two models, and tag the returned DataArray's attrs with
 `corrected`/`display_name` so callers can label plots and tables correctly
 without needing to know which models have a registered correction — see
-ce_simul.pmip4_config.CORRECTED_MODELS / display_name().
+ce_fields.pmip4_config.CORRECTED_MODELS / display_name().
 
 Created on Wed Jul 1 2026
 @author: Julien Emile-Geay

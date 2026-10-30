@@ -1,9 +1,9 @@
-"""Tests for ce_simul.products.compute_gmst (no HPC data needed)."""
+"""Tests for ce_fields.products.compute_gmst (no HPC data needed)."""
 import numpy as np
 import pytest
 import xarray as xr
 
-from ce_simul.products import compute_gmst
+from ce_fields.products import compute_gmst
 
 
 def _make_field(years, lat, val_by_lat):

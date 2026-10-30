@@ -34,15 +34,15 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
 sys.path.insert(0, '..')
-from ce_simul.data_config import DataConfig
-from ce_simul.pmip4_config import get_model_colors
+from ce_fields.data_config import DataConfig
+from ce_fields.pmip4_config import get_model_colors
 
 DATA_FOLDER = Path('../results/data')
 FIGURE_FOLDER = Path('../results/figures')
 FIGURE_FOLDER.mkdir(parents=True, exist_ok=True)
 
 # =============================================================================
-# COLORS — canonical per-model registry (ce_simul.pmip4_config.get_model_colors):
+# COLORS — canonical per-model registry (ce_fields.pmip4_config.get_model_colors):
 # tab10 cycled alphabetically over the raw model names, keyed by display_name
 # so corrected models (e.g. CESM2c) get their raw model's color, with
 # MPI-ESM1-2-LR fixed to black (MODEL_COLOR_OVERRIDES) so it reads the same

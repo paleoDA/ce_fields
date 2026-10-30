@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Environment-aware data path configuration for ce_simul.
+Environment-aware data path configuration for ce_fields.
 
 Created on Wed Jul 1 2026
 @author: Julien Emile-Geay
@@ -18,7 +18,7 @@ class DataConfig:
         if config_path is None:
             # Start from this file's location and go up to find the repo root
             current_file = Path(__file__).resolve()
-            repo_root = current_file.parent.parent  # Go up from ce_simul/ to repo root
+            repo_root = current_file.parent.parent  # Go up from ce_fields/ to repo root
             config_path = repo_root / 'data_config.yml'
 
         with open(config_path, 'r') as f:

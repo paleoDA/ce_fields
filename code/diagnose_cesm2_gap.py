@@ -21,8 +21,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, '..')
-from ce_simul.data_config import DataConfig
-from ce_simul.io import open_nc_or_zarr
+from ce_fields.data_config import DataConfig
+from ce_fields.io import open_nc_or_zarr
 
 config = DataConfig()
 pmip4_root = Path(config.config['environments'][config.environment]['paths']['pmip4_data'])

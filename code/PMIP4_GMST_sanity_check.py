@@ -17,11 +17,11 @@ from pathlib import Path
 from tqdm import tqdm
 
 sys.path.insert(0, '..')
-from ce_simul.data_config import DataConfig
-from ce_simul.io import open_nc_or_zarr
-from ce_simul.pmip4_config import (get_pmip4_models, get_cmip_hist_models,
+from ce_fields.data_config import DataConfig
+from ce_fields.io import open_nc_or_zarr
+from ce_fields.pmip4_config import (get_pmip4_models, get_cmip_hist_models,
                                     MODEL_VAR, YEAR_OFFSETS, STITCH_THRESHOLD)
-from ce_simul.products import load_stitched_tas, compute_gmst
+from ce_fields.products import load_stitched_tas, compute_gmst
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 

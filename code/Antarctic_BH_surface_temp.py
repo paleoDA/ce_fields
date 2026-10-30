@@ -8,9 +8,9 @@ Sites (Table 1 of Lyu et al., 2020, Clim. Past 16, 1411–1428):
     Mill Island  65°33′26″ S, 100°47′11″ E
     Styx         73°51.10′ S, 163°41.22′ E
 
-For each model, ce_simul.products.load_corrected_tas() loads the past1000/
+For each model, ce_fields.products.load_corrected_tas() loads the past1000/
 past2k run and stitches it with the CMIP6 historical run (1850–2014/2005)
-where needed — the same pipeline used throughout ce_simul. Only
+where needed — the same pipeline used throughout ce_fields. Only
 ACCESS-ESM1-5 and CESM2 carry a pre-1850 stitch-bias correction, and it is
 already baked into their archived data by code/apply_1850_adjustments.py;
 no correction is applied here at runtime for any model.
@@ -33,9 +33,9 @@ import xarray as xr
 from pathlib import Path
 
 sys.path.insert(0, '..')
-from ce_simul.data_config import DataConfig
-from ce_simul.pmip4_config import get_pmip4_models
-from ce_simul.products import load_corrected_tas
+from ce_fields.data_config import DataConfig
+from ce_fields.pmip4_config import get_pmip4_models
+from ce_fields.products import load_corrected_tas
 
 
 def _ts():

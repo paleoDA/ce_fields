@@ -4,7 +4,7 @@ diagnose_cesm2_gap2.py
 Follow-up to diagnose_cesm2_gap.py: that script showed the corrected
 CESM2 file itself is fine (continuous 850-1850, 12000 monthly steps), so
 the ~1000-year paleo gap seen in Antarctic_BH_surface_temp_PMIP4.nc must
-appear somewhere in ce_simul.products.load_stitched_tas's groupby/stitch
+appear somewhere in ce_fields.products.load_stitched_tas's groupby/stitch
 logic, or in Antarctic_BH_surface_temp.py's own per-model combine step.
 
 This calls the actual loading pipeline directly and inspects the annual
@@ -21,10 +21,10 @@ Needs the real PMIP4 data mounted (HPC only). Run from the code/ directory:
 import sys
 
 sys.path.insert(0, '..')
-from ce_simul.data_config import DataConfig
-from ce_simul.io import open_nc_or_zarr
-from ce_simul.pmip4_config import get_pmip4_models, get_cmip_hist_models, MODEL_VAR
-from ce_simul.products import load_stitched_tas, CFTIME_CODER
+from ce_fields.data_config import DataConfig
+from ce_fields.io import open_nc_or_zarr
+from ce_fields.pmip4_config import get_pmip4_models, get_cmip_hist_models, MODEL_VAR
+from ce_fields.products import load_stitched_tas, CFTIME_CODER
 
 MODEL = 'CESM2'
 config = DataConfig()

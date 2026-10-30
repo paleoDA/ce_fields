@@ -27,7 +27,7 @@ import numpy as np
 import xarray as xr
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from ce_simul.data_config import DataConfig
+from ce_fields.data_config import DataConfig
 
 # Global attributes worth surfacing if present (CMIP6/CMOR convention; raw
 # native-model output typically has few or none of these).

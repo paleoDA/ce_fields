@@ -1,5 +1,5 @@
 """
-Integration test for ce_simul.products against synthetic on-disk zarr stores.
+Integration test for ce_fields.products against synthetic on-disk zarr stores.
 
 Unlike test_products.py (pure in-memory arrays) and test_io.py (stitching
 logic in isolation), this exercises the full load_stitched_tas /
@@ -14,8 +14,8 @@ import pytest
 import xarray as xr
 import yaml
 
-from ce_simul.data_config import DataConfig
-from ce_simul.products import load_stitched_tas, load_corrected_tas
+from ce_fields.data_config import DataConfig
+from ce_fields.products import load_stitched_tas, load_corrected_tas
 
 
 def _make_monthly_ds(year_start, year_end, val=280.0):
