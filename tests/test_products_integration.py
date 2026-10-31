@@ -5,7 +5,7 @@ Unlike test_products.py (pure in-memory arrays) and test_io.py (stitching
 logic in isolation), this exercises the full load_stitched_tas /
 load_corrected_tas pipeline end-to-end: open_nc_or_zarr -> groupby annual
 mean -> stitch -> bias-correct, the exact path BTP_PMIP4_stacks.py (in
-ce_val) now calls into instead of re-deriving it locally.
+borehole_val) now calls into instead of re-deriving it locally.
 
 No HPC data needed -- everything is synthetic and local to tmp_path.
 """

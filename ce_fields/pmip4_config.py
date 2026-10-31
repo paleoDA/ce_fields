@@ -41,7 +41,7 @@ TRIM_END = {
 # under raw_pmip4_<model> in data_config.yml).
 
 # Raw model name -> display name for models with a registered correction, so
-# downstream repos (ce_val, warmth_and_trends) can label corrected series
+# downstream repos (borehole_val, docu_val, warmth_and_trends) can label corrected series
 # distinctly in plots/tables instead of silently treating them the same as
 # an uncorrected run. Use display_name() below rather than reading this
 # dict directly.
@@ -87,7 +87,7 @@ def get_pmip4_models(config):
 # Per-model color overrides, applied on top of the tab10 assignment in
 # get_model_colors() below. MPI-ESM1-2-LR's tab10 slot (index 7) is gray,
 # which reads poorly / collides with gray-toned "individual observation"
-# elements in several figures (e.g. ce_val's borehole stack plots), so it is
+# elements in several figures (e.g. borehole_val's stack plots), so it is
 # fixed to black everywhere a per-model color is assigned from this registry.
 MODEL_COLOR_OVERRIDES = {
     'MPI-ESM1-2-LR': 'black',
@@ -101,7 +101,7 @@ def get_model_colors(config, corrected: bool = True):
     (case-insensitive) order -- the same assignment used by
     code/PMIP4_1850_stitch.ipynb's "Full time series" figure and
     code/plot_Antarctic_BH_surface_temp.py -- so a given model reads as the
-    same color in every figure across this project and ce_val, except for
+    same color in every figure across this project and borehole_val, except for
     the fixed overrides in MODEL_COLOR_OVERRIDES. Keyed by display_name (see
     `display_name()`) so corrected models (e.g. CESM2c) get their raw
     model's color under their display label.

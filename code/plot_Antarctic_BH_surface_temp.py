@@ -46,7 +46,7 @@ FIGURE_FOLDER.mkdir(parents=True, exist_ok=True)
 # tab10 cycled alphabetically over the raw model names, keyed by display_name
 # so corrected models (e.g. CESM2c) get their raw model's color, with
 # MPI-ESM1-2-LR fixed to black (MODEL_COLOR_OVERRIDES) so it reads the same
-# way in every figure across this project and ce_val.
+# way in every figure across this project and borehole_val.
 # =============================================================================
 config = DataConfig()
 MODEL_COLORS = get_model_colors(config)

@@ -6,7 +6,7 @@ High-level API for producing PMIP4 annual tas fields, corrected or raw.
 This module is the single source of truth for "load past1000/past2k,
 stitch with CMIP6 historical where the run doesn't reach the present" — the
 pipeline previously duplicated across BTP_PMIP4_stacks.py,
-Antarctic_BH_surface_temp.py, and PMIP4_GMST_sanity_check.py in the ce_val
+Antarctic_BH_surface_temp.py, and PMIP4_GMST_sanity_check.py in the former ce_val
 repository. Other projects should call load_corrected_tas()/load_stitched_tas()
 rather than re-deriving this logic.
 
