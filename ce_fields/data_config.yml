@@ -1,23 +1,35 @@
 # Data configuration file for ce_fields repository: simulated (PMIP4/CMIP6)
-# and reconstructed (LMR, Neukom et al. 2019) Common Era climate fields
+# and reconstructed (LMR, Neukom et al. 2019) Common Era climate fields.
+#
+# This file ships with the package and is machine-independent: external
+# datasets have "/path/to/..." placeholders. Set their real locations in a
+# data_config.local.yml next to this file (gitignored), or in any file named
+# by the CE_FIELDS_LOCAL_CONFIG environment variable (see the README); either
+# overrides the entries below key by key, e.g.
+#   environments:
+#     laptop:
+#       paths:
+#         lmr_data: "/my/data/LMR"
 environments:
   laptop:
-    root: "/Users/julieneg/Documents/GitHub/ce_fields"
+    root: ".."  # repository root (holds results/), for clones
     paths:
       results: "results"
       figures: "results/figures"
-      pmip4_data: "/path/to/pmip4"  # HPC only — update if mounted locally
-      cmip_hist_data: "/path/to/cmip_hist"  # HPC only — update if mounted locally
-      lmr_data: "/Users/julieneg/Documents/Science/Research/LastMillenniumReanalysis/data"
+      pmip4_data: "/path/to/pmip4"
+      cmip_hist_data: "/path/to/cmip_hist"
+      lmr_data: "/path/to/lmr"
+      neukom_data: "/path/to/neukom2019"
 
   hpc:
-    root: "/home1/julieneg/ce_fields"
+    root: ".."
     paths:
       results: "results"
       figures: "results/figures"
-      pmip4_data: "/home1/julieneg/common_data/common/PMIP4_data"
-      cmip_hist_data: "/home1/julieneg/common_data/common/CMIP_hist_data"
-      lmr_data: "/path/to/lmr/data"  # Update this for HPC environment
+      pmip4_data: "/path/to/pmip4"
+      cmip_hist_data: "/path/to/cmip_hist"
+      lmr_data: "/path/to/lmr"
+      neukom_data: "/path/to/neukom2019"
 
 # File definitions
 files:
@@ -156,27 +168,27 @@ files:
   # reconstructions — six methods, each a 100-member ensemble, 5° resolution,
   # annual (May-April) resolution, 1-2000 CE. See ce_fields/neukom.py.
   neukom_am:
-    path: "/Users/julieneg/Documents/Science/ClimateData/Neukom_Nature2019/AM.nc"
+    path: "{neukom_data}/AM.nc"
     description: "Neukom2019 Analog Method (AM) 100-member gridded ensemble"
 
   neukom_cca:
-    path: "/Users/julieneg/Documents/Science/ClimateData/Neukom_Nature2019/CCA.nc"
+    path: "{neukom_data}/CCA.nc"
     description: "Neukom2019 Canonical Correlation Analysis (CCA) 100-member gridded ensemble"
 
   neukom_cps:
-    path: "/Users/julieneg/Documents/Science/ClimateData/Neukom_Nature2019/CPS.nc"
+    path: "{neukom_data}/CPS.nc"
     description: "Neukom2019 Composite-Plus-Scale (CPS) 100-member gridded ensemble"
 
   neukom_da:
-    path: "/Users/julieneg/Documents/Science/ClimateData/Neukom_Nature2019/DA.nc"
+    path: "{neukom_data}/DA.nc"
     description: "Neukom2019 Data Assimilation (DA) 100-member gridded ensemble (absolute temperature, K)"
 
   neukom_graphem:
-    path: "/Users/julieneg/Documents/Science/ClimateData/Neukom_Nature2019/GraphEM.nc"
+    path: "{neukom_data}/GraphEM.nc"
     description: "Neukom2019 GraphEM 100-member gridded ensemble"
 
   neukom_pcr:
-    path: "/Users/julieneg/Documents/Science/ClimateData/Neukom_Nature2019/PCR.nc"
+    path: "{neukom_data}/PCR.nc"
     description: "Neukom2019 Principal Component Regression (PCR) 100-member gridded ensemble"
 
 # Current environment (can be overridden)

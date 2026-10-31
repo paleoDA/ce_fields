@@ -1,7 +1,7 @@
 """
 Seasonal (DJF/MAM/JJA/SON) GMST anomalies for every registered PMIP4 model.
 
-Seasonal counterpart of results/tables/PMIP4_GMST_anomalies.csv (annual,
+Seasonal counterpart of ce_fields/data/PMIP4_GMST_anomalies.csv (annual,
 written by PMIP4_GMST_sanity_check.py), built for comparison with LMR
 Seasonal (warmth_and_trends/notebooks/LMR_volcanic_GMST.ipynb), whose
 seasons follow the same convention:
@@ -54,6 +54,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 from ce_fields.data_config import DataConfig
 from ce_fields.io import open_nc_or_zarr
+from ce_fields.stitch_corrections import GMST_ANOMALIES_CSV
 from ce_fields.pmip4_config import (get_pmip4_models, get_cmip_hist_models,
                                     MODEL_VAR, YEAR_OFFSETS, TRIM_END, STITCH_THRESHOLD)
 
@@ -191,7 +192,7 @@ if __name__ == '__main__':
     cmip_hist_models = get_cmip_hist_models(config)
     print(f"[{_ts()}] Models: {list(pmip4_models)}\n")
 
-    annual_csv = TABLES_DIR / 'PMIP4_GMST_anomalies.csv'
+    annual_csv = GMST_ANOMALIES_CSV
     annual = pd.read_csv(annual_csv, index_col=0)
     annual = annual[annual.index != 'has_stitch']
     annual.index = annual.index.astype(int)

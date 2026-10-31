@@ -19,6 +19,7 @@ from tqdm import tqdm
 sys.path.insert(0, '..')
 from ce_fields.data_config import DataConfig
 from ce_fields.io import open_nc_or_zarr
+from ce_fields.stitch_corrections import GMST_ANOMALIES_CSV
 from ce_fields.pmip4_config import (get_pmip4_models, get_cmip_hist_models,
                                     MODEL_VAR, YEAR_OFFSETS, STITCH_THRESHOLD)
 from ce_fields.products import load_stitched_tas, compute_gmst
@@ -197,9 +198,9 @@ if gmst_series:
 
     gmst_df = pd.DataFrame(gmst_series)
     gmst_df.index.name = 'year'
-    tables_dir = Path('../results/tables')
-    tables_dir.mkdir(parents=True, exist_ok=True)
-    csv_path = tables_dir / 'PMIP4_GMST_anomalies.csv'
+    # Shipped as package data (ce_fields.stitch_corrections reads it), so that
+    # downstream repos can derive the 1850 stitch corrections without the raw data.
+    csv_path = GMST_ANOMALIES_CSV
     gmst_df.to_csv(csv_path, float_format='%.4f')
     # Append stitch indicator: 1 if a separate CMIP6 historical run was stitched at 1850, 0 otherwise
     with open(csv_path, 'a') as _f:

@@ -34,7 +34,7 @@ TRIM_END = {
 # Pre-1850 past1000 stitch corrections (flat offset for ACCESS-ESM1-5;
 # linear detrend for CESM2 — the only 2 models whose 1849->1850 jump exceeds
 # noise, see code/PMIP4_1850_stitch.ipynb) were computed from
-# results/tables/PMIP4_GMST_anomalies.csv and applied in-place to the
+# ce_fields/data/PMIP4_GMST_anomalies.csv (ce_fields.stitch_corrections) and applied in-place to the
 # archived data by code/apply_1850_adjustments.py. load_stitched_tas() reads
 # the corrected files by default (use_corrected=True); pass
 # use_corrected=False to read the original raw data instead (registered
@@ -115,7 +115,11 @@ def get_model_colors(config, corrected: bool = True):
     """
     import matplotlib.pyplot as plt
 
-    raw_models = list(get_pmip4_models(config))
+    # Model names only (no path resolution), so this also works on machines
+    # without the PMIP4 data, where the pmip4_data root is a placeholder.
+    prefix = 'pmip4_'
+    raw_models = sorted((k[len(prefix):] for k in config.config['files'] if k.startswith(prefix)),
+                        key=str.lower)
     tab10 = plt.get_cmap('tab10').colors
     colors = {
         display_name(raw, corrected=corrected): tab10[i % len(tab10)]
