@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "ce_fields: simulated and reconstructed Common Era climate fields"
+abstract: >-
+  Utilities to load, stitch and bias-correct PMIP4 past1000/past2k and
+  CMIP6 historical simulations, and to load the Last Millennium Reanalysis
+  (v2.1, Online, Seasonal) and the Neukom et al. (2019) field
+  reconstructions, so that several validation projects can share them.
+type: software
+authors:
+  - given-names: Julien
+    family-names: Emile-Geay
+    affiliation: "Department of Earth Sciences, University of Southern California, Los Angeles, CA, USA"
+    orcid: "https://orcid.org/0000-0001-5920-4751"
+  - given-names: Tanaya
+    family-names: Gondhalekar
+    affiliation: "Department of Earth Sciences, University of Southern California, Los Angeles, CA, USA"
+    orcid: "https://orcid.org/0009-0004-2440-3266"
+version: 0.3.1
+date-released: "2026-11-02"
+license: MIT
+repository-code: "https://github.com/paleoDA/ce_fields"
+keywords:
+  - paleoclimate
+  - Common Era
+  - PMIP4
+  - CMIP6
+  - climate field reconstructions

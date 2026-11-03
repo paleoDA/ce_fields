@@ -12,3 +12,6 @@ results/logs/
 
 # Machine-specific data locations (see ce_fields/data_config.yml)
 data_config.local.yml
+
+# Local Claude Code settings
+.claude/settings.local.json

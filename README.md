@@ -101,3 +101,11 @@ from the hostname, or set with the `DATA_ENV` environment variable.
 - `code/` — pipeline and diagnostic scripts (`PMIP4_GMST_sanity_check.py`, `apply_1850_adjustments.py`, `check_pmip4_zarr.py`, `Antarctic_BH_surface_temp.py`), and `PMIP4_1850_stitch.ipynb`, the calibration notebook deriving the pre-1850 bias corrections
 - `tests/` — pytest suite (no HPC data required)
 - `results/` — checked-in figures and tables (stitching diagnostics, CESM2 GMST)
+
+## Citation
+
+Citation metadata are in `CITATION.cff`.
+
+## License
+
+MIT License (see LICENSE file).
