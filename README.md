@@ -1,5 +1,7 @@
 # ce_fields
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23930848.svg)](https://doi.org/10.5281/zenodo.23930848)
+
 Utilities to access Common Era climate fields, to enable several
 projects can share them without duplicating loading logic:
 
@@ -114,7 +116,9 @@ from the hostname, or set with the `DATA_ENV` environment variable.
 
 ## Citation
 
-Citation metadata are in `CITATION.cff`.
+Please cite the Zenodo archive, https://doi.org/10.5281/zenodo.23930848.
+This DOI always resolves to the latest version; each version also has its own
+DOI, listed on the Zenodo page. Citation metadata are in `CITATION.cff`.
 
 ## License
 
