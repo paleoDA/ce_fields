@@ -59,7 +59,7 @@ can be rebuilt without them.
 | LMR v2.1 ([Tardif et al., 2019](https://doi.org/10.5194/cp-15-1251-2019)) | `lmr_data` | `LMRv2.1/`: gridded ensemble mean and spread, GMST ensemble | 2.3 GB (GMST only: 12 MB) | NCEI Paleoclimatology, <https://www.atmos.uw.edu/~hakim/lmr/> |
 | LMR Online ([Perkins and Hakim, 2021](https://doi.org/10.1029/2020PA003959)) | `lmr_data` | `LMRonline/…/`: gridded ensemble mean and variance, GMST indices | 1.4 GB (GMST only: 153 MB) | NCEI Paleoclimatology, <https://www.atmos.uw.edu/~hakim/lmr/> |
 | LMR Seasonal ([Meng et al., 2025](https://doi.org/10.1175/JCLI-D-25-0048.1)) | `lmr_data` | `LMR_seasonal/`: gridded ensemble mean, GMST ensemble | 0.6 GB (GMST only: 29 MB) | <https://atmos.uw.edu/~zilumeng/LMR_Seasonal/data/> |
-| Neukom et al. (2019) gridded reconstructions, 6 methods × 100 members ([doi](https://doi.org/10.1038/s41586-019-1401-2)) | `neukom_data` | `AM.nc`, `CCA.nc`, `CPS.nc`, `DA.nc`, `GraphEM.nc`, `PCR.nc` | 15 GB | [NCEI](https://www.ncei.noaa.gov/pub/data/paleo/pages2k/neukom2019temp/) |
+| [Neukom et al. (2019) ](https://doi.org/10.1038/s41586-019-1401-2) gridded reconstructions, 6 methods × 100 members | `neukom_data` | `AM.nc`, `CCA.nc`, `CPS.nc`, `DA.nc`, `GraphEM.nc`, `PCR.nc` | 15 GB | [NCEI](https://www.ncei.noaa.gov/pub/data/paleo/pages2k/neukom2019temp/) |
 
 The PMIP4/CMIP6 output used here (on USC's CARC cluster) amounts to several GB
 per model and experiment, so regenerating products from it requires a serious
