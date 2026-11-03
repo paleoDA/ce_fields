@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ce-fields"
-version = "0.3.1"
+version = "0.3.2"
 description = "Simulated (PMIP4/CMIP6) and reconstructed (LMR, Neukom et al. 2019) Common Era climate fields"
 readme = "README.md"
 requires-python = ">=3.9"

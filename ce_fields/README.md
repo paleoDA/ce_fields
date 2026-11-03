@@ -1,12 +1,14 @@
 # ce_fields
 
-Utilities to access Common Era climate fields, to enable several
-projects can share them without duplicating loading logic:
+`ce_fields` is a data-access and preprocessing library, comprising a data registry of Common Era climate fields (both simulated and reconstructed from proxy data), as well as utilities to access them. Its main use is a scaffolding for actual science projects using those fields
+without duplicating loading logic:
 
 - **Simulations:** loading, stitching, and bias-correcting PMIP4 past1000/past2k
   and CMIP6-historical runs (`products`, `pmip4_config`, `io`).
 - **Reconstructions:** the Last Millennium Reanalysis, v2.1, Online and Seasonal
   (`lmr`), and the six Neukom et al. (2019) field reconstructions (`neukom`).
+
+Note: this was primarily meant to grease the wheels of data loading for the USC Climate Dynamics group. The data registry will need to be heavily edited to be useful to anyone else, but the repository provides a roadmap for how to organize such files, and how to access their data painlessly once paths are set up.   
 
 ## Install
 

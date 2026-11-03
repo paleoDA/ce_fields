@@ -1,0 +1,30 @@
+# Conda environment for ce_fields, pinned to tested versions
+# (Python 3.12, macOS arm64). xesmf/esmpy are only needed for regridding.
+#   conda env create -f environment.yml
+#   conda activate ce_fields
+name: ce_fields
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy=2.4.6
+  - pandas=3.0.3
+  - xarray=2026.2.0
+  - netcdf4=1.7.4
+  - zarr=3.2.1
+  - cftime=1.6.5
+  - pyyaml=6.0.3
+  - fsspec=2026.3.0
+  - tqdm=4.67.3
+  - dask=2026.3.0
+  # scripts
+  - matplotlib=3.10.8
+  - scipy=1.17.1
+  # regridding
+  - xesmf=0.9.2
+  - esmpy=8.9.1
+  # tests
+  - pytest=9.0.3
+  - pip
+  - pip:
+      - -e .

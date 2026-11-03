@@ -10,6 +10,16 @@ projects can share them without duplicating loading logic:
 
 ## Install
 
+With conda (pinned, tested versions; includes the regridding and script
+dependencies):
+
+```bash
+conda env create -f environment.yml
+conda activate ce_fields
+```
+
+or with pip only (minimum versions):
+
 ```bash
 pip install -e .
 ```
