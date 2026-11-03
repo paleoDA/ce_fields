@@ -1,15 +1,12 @@
 # ce_fields
 
-Common Era climate fields to be validated, in one place so that several
-validation projects can share them without duplicating loading logic:
+Utilities to access Common Era climate fields, to enable several
+projects can share them without duplicating loading logic:
 
 - **Simulations:** loading, stitching, and bias-correcting PMIP4 past1000/past2k
   and CMIP6-historical runs (`products`, `pmip4_config`, `io`).
 - **Reconstructions:** the Last Millennium Reanalysis, v2.1, Online and Seasonal
   (`lmr`), and the six Neukom et al. (2019) field reconstructions (`neukom`).
-
-Formerly `ce_simul`, which held the simulations only; renamed when the LMR and
-Neukom2019 loaders moved here from `ce_val`.
 
 ## Install
 
@@ -50,8 +47,8 @@ from ce_fields.neukom import Neukom2019
 
 The fields themselves are not distributed with this package: they are large
 and published elsewhere. To work with them, download local copies and tell
-ce_fields where they are (see [Data configuration](#data-configuration)).
-Validation repositories such as
+`ce_fields` where they are (see [Data configuration](#data-configuration)).
+Repositories such as
 [borehole_val](https://github.com/LinkedEarth/borehole_val) archive the
 intermediate products derived from these fields, so their figures and tables
 can be rebuilt without them.
@@ -67,7 +64,7 @@ can be rebuilt without them.
 The PMIP4/CMIP6 output used here (on USC's CARC cluster) amounts to several GB
 per model and experiment, so regenerating products from it requires a serious
 commitment of storage and compute, in practice on an HPC cluster. It is stored
-as zarr or netCDF under a shared root; the exact path of each model's file is in
+as zarr or netCDF under a shared root; the exact path of each model's file for CommonClimate is in
 `ce_fields/data_config.yml`. The annual GMST derived from it ships with the
 package (`ce_fields/data/PMIP4_GMST_anomalies.csv`), together with the
 pre-1850 stitch corrections derived from that table
@@ -77,7 +74,7 @@ output.
 ## Data configuration
 
 `ce_fields/data_config.yml` (shipped with the package) registers every file,
-with `/path/to/...` placeholders for the external roots above. Set the roots
+with `/path/to/...` placeholders for the external roots above. To make it work for you, set the roots
 that exist on your machine in an override file, which is merged on top of it
 key by key:
 
