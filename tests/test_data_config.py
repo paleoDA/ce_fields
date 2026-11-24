@@ -83,3 +83,11 @@ def test_packaged_config_is_found_by_default():
 def test_list_files_reports_unset_locations(tmp_path, capsys):
     DataConfig(_write_config(tmp_path)).list_files()
     assert 'ext_file: location not set' in capsys.readouterr().out
+
+
+def test_packaged_plot_colors():
+    config = DataConfig()
+    assert config.get_plot_color('lmr_seasonal') == '#ff7f0e'
+    assert config.get_plot_color('hadcrut5') == 'yellowgreen'
+    with pytest.raises(KeyError):
+        config.get_plot_color('no_such_product')

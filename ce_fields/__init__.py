@@ -4,6 +4,7 @@ from .data_config import DataConfig
 from .pmip4_config import get_pmip4_models, get_cmip_hist_models, CORRECTED_MODELS, display_name
 from .io import open_nc_or_zarr, stitch_annual_tas
 from .products import load_stitched_tas, load_corrected_tas, compute_gmst
+from .instrumental import Instrumental
 
 __all__ = [
     'DataConfig',
@@ -16,4 +17,5 @@ __all__ = [
     'load_stitched_tas',
     'load_corrected_tas',
     'compute_gmst',
+    'Instrumental',
 ]
