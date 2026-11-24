@@ -200,7 +200,7 @@ files:
     description: "Neukom2019 Principal Component Regression (PCR) 100-member gridded ensemble"
 
   # Instrumental gridded temperature products, loaded with
-  # ce_fields.instrumental.Instrumental.from_version(product, version, ...).
+  # ce_fields.Instrumental.from_version(product, version, ...).
   # One entry per (product, version, variable, kind): the version is part of
   # the key and is never implied, because these products revise past values
   # from one release to the next. `version_check` names a global attribute of
