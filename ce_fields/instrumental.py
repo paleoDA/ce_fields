@@ -51,7 +51,7 @@ PRODUCTS = {
         reference='Rohde & Hausfather (2020), doi:10.5194/essd-12-3469-2020'),
     'dcent_i': dict(
         name='DCENT-I', native_baseline=(1982, 2014),
-        reference='Geoscience Data Journal, doi:10.1002/gdj3.70054'),
+        reference='Chan et al. (2026), Geosci. Data J. 13, e70054, doi:10.1002/gdj3.70054'),
 }
 
 
