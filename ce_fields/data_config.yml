@@ -20,6 +20,10 @@ environments:
       cmip_hist_data: "/path/to/cmip_hist"
       lmr_data: "/path/to/lmr"
       neukom_data: "/path/to/neukom2019"
+      hadcrut5_data: "/path/to/hadcrut5"
+      crutem5_data: "/path/to/crutem5"
+      berkeley_earth_data: "/path/to/berkeley_earth"
+      dcent_data: "/path/to/dcent"
 
   hpc:
     root: ".."
@@ -30,6 +34,10 @@ environments:
       cmip_hist_data: "/path/to/cmip_hist"
       lmr_data: "/path/to/lmr"
       neukom_data: "/path/to/neukom2019"
+      hadcrut5_data: "/path/to/hadcrut5"
+      crutem5_data: "/path/to/crutem5"
+      berkeley_earth_data: "/path/to/berkeley_earth"
+      dcent_data: "/path/to/dcent"
 
 # File definitions
 files:
@@ -190,6 +198,160 @@ files:
   neukom_pcr:
     path: "{neukom_data}/PCR.nc"
     description: "Neukom2019 Principal Component Regression (PCR) 100-member gridded ensemble"
+
+  # Instrumental gridded temperature products, loaded with
+  # ce_fields.Instrumental.from_version(product, version, ...).
+  # One entry per (product, version, variable, kind): the version is part of
+  # the key and is never implied, because these products revise past values
+  # from one release to the next. `version_check` names a global attribute of
+  # the file and a string it must contain; the loader refuses a file that
+  # fails it, so a newer download saved under an old name cannot slip in.
+  # Adding a release is a pure YAML edit: copy an entry and change its
+  # version, path and version_check.
+  #
+  # variable: tas  = the product's headline blended land air + SST anomaly
+  #           lsat = land surface air temperature anomaly (land only)
+  #           sst  = sea surface temperature anomaly
+  # kind:     mean = ensemble mean / best estimate; members = ensemble members
+  instr_hadcrut5_5.0.1.0_tas_mean:
+    path: "{hadcrut5_data}/HadCRUT.5.0.1.0.analysis.anomalies.ensemble_mean.nc"
+    description: "HadCRUT5 v5.0.1.0 ensemble-mean monthly anomalies (rel. 1961-1990), 5x5 deg, 1850-2020"
+    product: hadcrut5
+    version: "5.0.1.0"
+    variable: tas
+    kind: mean
+    var: tas_mean
+    version_check: {attr: version, contains: "HadCRUT.5.0.1.0"}
+
+  instr_hadcrut5_5.0.2.0_tas_mean:
+    path: "{hadcrut5_data}/HadCRUT.5.0.2.0.analysis.anomalies.ensemble_mean.nc"
+    description: "HadCRUT5 v5.0.2.0 ensemble-mean monthly anomalies (rel. 1961-1990), 5x5 deg, 1850-2025/02"
+    product: hadcrut5
+    version: "5.0.2.0"
+    variable: tas
+    kind: mean
+    var: tas_mean
+    version_check: {attr: version, contains: "HadCRUT.5.0.2.0"}
+
+  instr_hadcrut5_5.1.0.0_tas_mean:
+    path: "{hadcrut5_data}/HadCRUT.5.1.0.0.analysis.anomalies.ensemble_mean.nc"
+    description: "HadCRUT5 v5.1.0.0 ensemble-mean monthly anomalies (rel. 1961-1990), 5x5 deg; this release is updated monthly, so its end date depends on the download"
+    product: hadcrut5
+    version: "5.1.0.0"
+    variable: tas
+    kind: mean
+    var: tas_mean
+    version_check: {attr: version, contains: "HadCRUT.5.1.0.0"}
+
+  instr_crutem5_5.0.2.0_lsat_mean:
+    path: "{crutem5_data}/CRUTEM.5.0.2.0.anomalies.nc"
+    description: "CRUTEM5 v5.0.2.0 land air temperature monthly anomalies (rel. 1961-1990), 5x5 deg, not infilled"
+    product: crutem5
+    version: "5.0.2.0"
+    variable: lsat
+    kind: mean
+    var: tas
+    version_check: {attr: version, contains: "CRUTEM.5.0.2.0"}
+
+  # Berkeley Earth has no release numbers: each monthly update is identified
+  # by the build stamp in its `source_file` attribute (here 2025-01-09).
+  instr_berkeley_earth_20250109_lsat_mean:
+    path: "{berkeley_earth_data}/Complete_TAVG_LatLong1.nc"
+    description: "Berkeley Earth land-only TAVG monthly anomalies (rel. 1951-1980), 1x1 deg, 1750-2024, build of 2025-01-09"
+    product: berkeley_earth
+    version: "20250109"
+    variable: lsat
+    kind: mean
+    var: temperature
+    version_check: {attr: source_file, contains: ".20250109T"}
+
+  instr_dcent_i_1.1.0.0_tas_mean:
+    path: "{dcent_data}/v1.1.0/DCENT_I_1.1.0.0_mean_spread_ts.nc"
+    description: "DCENT-I v1.1.0.0 (infilled DCENT) ensemble-mean blended surface temperature monthly anomalies (rel. 1982-2014), 5x5 deg"
+    product: dcent_i
+    version: "1.1.0.0"
+    variable: tas
+    kind: mean
+    var: ts_mean
+    version_check: {attr: version, contains: "1.1.0.0"}
+
+  instr_dcent_i_1.1.0.0_lsat_mean:
+    path: "{dcent_data}/v1.1.0/DCENT_I_1.1.0.0_mean_spread_lsat.nc"
+    description: "DCENT-I v1.1.0.0 ensemble-mean land surface air temperature monthly anomalies (rel. 1982-2014), 5x5 deg"
+    product: dcent_i
+    version: "1.1.0.0"
+    variable: lsat
+    kind: mean
+    var: lsat_mean
+    version_check: {attr: version, contains: "1.1.0.0"}
+
+  instr_dcent_i_1.1.0.0_sst_mean:
+    path: "{dcent_data}/v1.1.0/DCENT_I_1.1.0.0_mean_spread_sst.nc"
+    description: "DCENT-I v1.1.0.0 ensemble-mean sea surface temperature monthly anomalies (rel. 1982-2014), 5x5 deg"
+    product: dcent_i
+    version: "1.1.0.0"
+    variable: sst
+    kind: mean
+    var: sst_mean
+    version_check: {attr: version, contains: "1.1.0.0"}
+
+  # Member files hold all three variables (ts, lsat, sst), one realization each.
+  instr_dcent_i_1.1.0.0_tas_members:
+    path: "{dcent_data}/v1.1.0/DCENT_I_1.1.0.0_member_*.nc"
+    description: "DCENT-I v1.1.0.0, 200 ensemble members, blended surface temperature monthly anomalies (rel. 1982-2014), 5x5 deg"
+    product: dcent_i
+    version: "1.1.0.0"
+    variable: tas
+    kind: members
+    var: ts
+    version_check: {attr: version, contains: "1.1.0.0"}
+
+  instr_dcent_i_1.1.0.0_lsat_members:
+    path: "{dcent_data}/v1.1.0/DCENT_I_1.1.0.0_member_*.nc"
+    description: "DCENT-I v1.1.0.0, 200 ensemble members, land surface air temperature monthly anomalies (rel. 1982-2014), 5x5 deg"
+    product: dcent_i
+    version: "1.1.0.0"
+    variable: lsat
+    kind: members
+    var: lsat
+    version_check: {attr: version, contains: "1.1.0.0"}
+
+  instr_dcent_i_1.1.0.0_sst_members:
+    path: "{dcent_data}/v1.1.0/DCENT_I_1.1.0.0_member_*.nc"
+    description: "DCENT-I v1.1.0.0, 200 ensemble members, sea surface temperature monthly anomalies (rel. 1982-2014), 5x5 deg"
+    product: dcent_i
+    version: "1.1.0.0"
+    variable: sst
+    kind: members
+    var: sst
+    version_check: {attr: version, contains: "1.1.0.0"}
+
+# Plot colors for the products ce_fields serves, so every project draws a
+# given product the same way (DataConfig.get_plot_color). Formerly kept in
+# ce_val; downstream repos fall back to these for keys they don't define.
+plot_styles:
+  colors:
+    # Last Millennium Reanalysis (in publication order)
+    lmr_v2_1: "#1f77b4"      # Blue - published 2019
+    lmr_online: "#be0119"    # Scarlet - published 2021
+    lmr_seasonal: "#ff7f0e"  # Orange - published 2025
+
+    # Neukom et al. (2019) multi-method field reconstructions (validated
+    # distinct from each other and from the LMR colors with the dataviz
+    # skill's validate_palette.js)
+    neukom_am: "#a0522d"       # Sienna
+    neukom_cca: "#9467bd"      # Purple
+    neukom_cps: "#17becf"      # Cyan
+    neukom_da: "#d62728"       # Red
+    neukom_graphem: "#e377c2"  # Pink
+    neukom_pcr: "#bf9000"      # Goldenrod
+
+    # Instrumental products (keys = Instrumental product names); one shared
+    # hue, as in docu_val/borehole_val -- vary line style to tell them apart
+    hadcrut5: "yellowgreen"
+    crutem5: "yellowgreen"
+    berkeley_earth: "yellowgreen"
+    dcent_i: "yellowgreen"
 
 # Current environment (can be overridden)
 current_environment: "laptop"

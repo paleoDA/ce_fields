@@ -139,6 +139,13 @@ class DataConfig:
             root = self.config_dir / root
         return root / path
 
+    def get_plot_color(self, dataset_key):
+        """Standardized plot color for a dataset, e.g. 'lmr_seasonal', 'hadcrut5'."""
+        colors = self.config.get('plot_styles', {}).get('colors', {})
+        if dataset_key not in colors:
+            raise KeyError(f"Color for '{dataset_key}' not found in plot_styles configuration")
+        return colors[dataset_key]
+
     def get_all_paths(self):
         """Get all configured file paths for current environment"""
         return {key: self.get_file_path(key) for key in self.config['files']}

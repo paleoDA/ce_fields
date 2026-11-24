@@ -9,6 +9,8 @@ projects can share them without duplicating loading logic:
   and CMIP6-historical runs (`products`, `pmip4_config`, `io`).
 - **Reconstructions:** the Last Millennium Reanalysis, v2.1, Online and Seasonal
   (`lmr`), and the six Neukom et al. (2019) field reconstructions (`neukom`).
+- **Instrumental:** gridded temperature products (HadCRUT5, CRUTEM5, Berkeley
+  Earth, DCENT-I), always loaded by explicit version (`instrumental`).
 
 ## Install
 
@@ -51,9 +53,31 @@ See `ce_fields/products.py` for the full API (`load_stitched_tas`, `load_correct
 Reconstructions:
 
 ```python
-from ce_fields.lmr import LMR
-from ce_fields.neukom import Neukom2019
+from ce_fields import LMR, Neukom2019
 ```
+
+Everything public is importable from the package itself (`from ce_fields import ...`).
+
+Instrumental products are loaded by **explicit version**. There is no default
+and no "latest", because each release revises past values:
+
+```python
+from ce_fields import Instrumental
+
+Instrumental.catalog()                                    # registered (product, version, variable, kind), and found here
+hc = Instrumental.from_version('hadcrut5', '5.1.0.0')     # annual field, (year, lat, lon), lon 0-360
+gmst = hc.gmst(ref_period=(1951, 1980))                   # cos(lat)-weighted, re-centered
+hc.label                                                  # 'HadCRUT5 v5.1.0.0' -- use in plots/tables
+dcent = Instrumental.from_version('dcent_i', '1.1.0.0', kind='members')   # 200 members, lazily
+```
+
+Each catalog entry carries a `version_check` against the file's own metadata,
+and loading refuses a file that fails it. Years with fewer than 12 months
+(the running year of an operational release) are dropped when annualizing.
+Products keep their native baselines (in `data.attrs['native_baseline']`)
+unless `ref_period` is given. To register a new release, copy its product's
+entry in `ce_fields/data_config.yml` and change the version, path and
+`version_check`.
 
 ## Data
 
@@ -71,6 +95,10 @@ can be rebuilt without them.
 | LMR v2.1 ([Tardif et al., 2019](https://doi.org/10.5194/cp-15-1251-2019)) | `lmr_data` | `LMRv2.1/`: gridded ensemble mean and spread, GMST ensemble | 2.3 GB (GMST only: 12 MB) | NCEI Paleoclimatology, <https://www.atmos.uw.edu/~hakim/lmr/> |
 | LMR Online ([Perkins and Hakim, 2021](https://doi.org/10.1029/2020PA003959)) | `lmr_data` | `LMRonline/…/`: gridded ensemble mean and variance, GMST indices | 1.4 GB (GMST only: 153 MB) | NCEI Paleoclimatology, <https://www.atmos.uw.edu/~hakim/lmr/> |
 | LMR Seasonal ([Meng et al., 2025](https://doi.org/10.1175/JCLI-D-25-0048.1)) | `lmr_data` | `LMR_seasonal/`: gridded ensemble mean, GMST ensemble | 0.6 GB (GMST only: 29 MB) | <https://atmos.uw.edu/~zilumeng/LMR_Seasonal/data/> |
+| HadCRUT5 ([Morice et al., 2021](https://doi.org/10.1029/2019JD032361)): v5.0.1.0, v5.0.2.0, v5.1.0.0 | `hadcrut5_data` | `HadCRUT.<version>.analysis.anomalies.ensemble_mean.nc` | ~30 MB per version | [Met Office](https://www.metoffice.gov.uk/hadobs/hadcrut5/) |
+| CRUTEM5 ([Osborn et al., 2021](https://doi.org/10.1029/2019JD032352)): v5.0.2.0 | `crutem5_data` | `CRUTEM.5.0.2.0.anomalies.nc` | 12 MB | [Met Office](https://www.metoffice.gov.uk/hadobs/crutem5/) |
+| Berkeley Earth land TAVG, 1x1 deg ([Rohde and Hausfather, 2020](https://doi.org/10.5194/essd-12-3469-2020)): build 2025-01-09 | `berkeley_earth_data` | `Complete_TAVG_LatLong1.nc` | 190 MB | [Berkeley Earth](https://berkeleyearth.org/data/) |
+| DCENT-I ([Chan et al., 2026](https://doi.org/10.1002/gdj3.70054)): v1.1.0.0 | `dcent_data` | `v1.1.0/DCENT_I_1.1.0.0_mean_spread_{ts,lsat,sst}.nc`, `v1.1.0/DCENT_I_1.1.0.0_member_*.nc` | 8 GB (means only: 0.3 GB) | DCENT |
 | Neukom et al. (2019) gridded reconstructions, 6 methods × 100 members ([doi](https://doi.org/10.1038/s41586-019-1401-2)) | `neukom_data` | `AM.nc`, `CCA.nc`, `CPS.nc`, `DA.nc`, `GraphEM.nc`, `PCR.nc` | 15 GB | [NCEI](https://www.ncei.noaa.gov/pub/data/paleo/pages2k/neukom2019temp/) |
 
 The PMIP4/CMIP6 output used here (on USC's CARC cluster) amounts to several GB
@@ -97,6 +125,7 @@ environments:
     paths:
       lmr_data: "/my/data/LMR"
       neukom_data: "/my/data/Neukom_Nature2019"
+      hadcrut5_data: "/my/data/HadCRUT5"
 ```
 
 Put it either next to `ce_fields/data_config.yml` in a clone (the name
@@ -109,7 +138,7 @@ from the hostname, or set with the `DATA_ENV` environment variable.
 
 ## Repository layout
 
-- `ce_fields/` — installable package (config, I/O, stitching, bias correction, high-level `products` API; LMR and Neukom2019 loaders), with `data_config.yml` and the packaged GMST table in `data/`
+- `ce_fields/` — installable package (config, I/O, stitching, bias correction, high-level `products` API; LMR, Neukom2019 and versioned instrumental loaders), with `data_config.yml` and the packaged GMST table in `data/`
 - `code/` — pipeline and diagnostic scripts (`PMIP4_GMST_sanity_check.py`, `apply_1850_adjustments.py`, `check_pmip4_zarr.py`, `Antarctic_BH_surface_temp.py`), and `PMIP4_1850_stitch.ipynb`, the calibration notebook deriving the pre-1850 bias corrections
 - `tests/` — pytest suite (no HPC data required)
 - `results/` — checked-in figures and tables (stitching diagnostics, CESM2 GMST)
