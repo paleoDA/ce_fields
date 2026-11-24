@@ -53,9 +53,10 @@ See `ce_fields/products.py` for the full API (`load_stitched_tas`, `load_correct
 Reconstructions:
 
 ```python
-from ce_fields.lmr import LMR
-from ce_fields.neukom import Neukom2019
+from ce_fields import LMR, Neukom2019
 ```
+
+Everything public is importable from the package itself (`from ce_fields import ...`).
 
 Instrumental products are loaded by **explicit version**. There is no default
 and no "latest", because each release revises past values:
