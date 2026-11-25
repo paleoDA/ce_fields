@@ -118,6 +118,44 @@ used by `ce_fields.sea()` for superposed epoch analysis of volcanic responses
 instead (CESM1.1, iCESM; `pmip4_config.VOLCANIC_FORCING`), `ce_fields.load_gao2008()`
 reads that record remotely.
 
+## Idiosyncrasies
+
+Known quirks of individual simulations, as reported by the modeling groups.
+
+### EC-Earth3-Veg-LR `past1000`: no volcanic forcing in the ESGF run
+
+The `past1000` run archived on ESGF (the one used here; reference:
+[Döscher et al., 2022](https://doi.org/10.5194/gmd-15-2973-2022)) is meant to
+include all PMIP4 transient forcings: orbital, solar, greenhouse gases and land
+use, with dynamic vegetation from LPJ-GUESS. However, the **radiative effect of
+the volcanic forcing was overwritten by its pre-industrial value**, so volcanic
+eruptions have no effect in that run. The modeling group found this later,
+corrected it and reran the simulation. The corrected run is not on ESGF, and a
+paper documenting both runs is in preparation (EC-Earth modeling group, pers.
+comm., July 2026). This explains why EC-Earth3-Veg-LR shows no post-eruption
+cooling in the superposed epoch analysis (`code/PMIP4_LMR_volcanic_SEA.py`;
+issue #5). Treat this run as a no-volcanic-forcing experiment.
+
+### CESM2 `past1000` (run 002): warming drift and strong volcanic aerosol
+
+From Jiang Zhu (pers. comm.):
+
+- **Warming drift.** `past1000.002` was branched from an 850 CE control run
+  that included a "background" volcanic emission representing an average
+  850 CE state. When `past1000` started, that background emission was removed at
+  once and replaced by the transient PMIP4 volcanic forcing. The abrupt change
+  causes a warming trend through the simulation. One suggested fix is to detrend
+  `past1000.002` using the corresponding 850 CE control, if it is still
+  available. Here, the trend is instead removed by a linear detrend of the
+  `past1000` GMST itself, which is the pre-1850 correction behind `CESM2c` (see
+  `ce_fields.stitch_corrections` and `code/PMIP4_1850_stitch.ipynb`).
+- **High stratospheric aerosol optical depth (SAOD).** CESM2's volcanic SAOD is
+  higher than in the other models, for unknown reasons. The forcing was
+  implemented by Mike Mills, now retired. The run used WACCM6ma, the first time
+  a high-top model with stratospheric chemistry and dynamics was used for a
+  last-millennium simulation at NCAR. This may be relevant to CESM2's strong
+  post-eruption cooling in the superposed epoch analysis.
+
 ## Data configuration
 
 `ce_fields/data_config.yml` (shipped with the package) registers every file,
