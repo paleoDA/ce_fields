@@ -74,7 +74,7 @@ Issues = "https://github.com/paleoDA/ce_fields/issues"
 packages = ["ce_fields"]
 
 [tool.setuptools.package-data]
-ce_fields = ["data_config.yml", "data/*.csv"]
+ce_fields = ["data_config.yml", "data/*.csv", "data/eVolv2k_v3/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
