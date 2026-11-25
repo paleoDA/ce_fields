@@ -17,7 +17,13 @@ MODEL_VAR = {
 
 # Offset to convert model-internal year to CE year (default 0)
 YEAR_OFFSETS = {
-    'MPI-ESM1-2-LR': 7001,   # model years 7001–8850 → CE 0–1849
+    # past2k on ESGF (v20210714) spans model years 7001–8850 (files
+    # 700101-702012 ... 883101-885012), i.e. CE 1–1850: there is no year 0 CE,
+    # and the last year overlaps the historical run's 1850, which
+    # stitch_annual_tas() drops from hist (as for EC-Earth3-Veg-LR's past1000).
+    # The former 7001 put every value one year early (issue #7): volcanic
+    # coolings led the eruptions and the other models by a year.
+    'MPI-ESM1-2-LR': 7000,
 }
 
 # PMIP4 paleo runs whose last CE year is below this threshold need a CMIP6
