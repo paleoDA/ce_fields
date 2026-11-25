@@ -149,7 +149,7 @@ use, with dynamic vegetation from LPJ-GUESS. However, the **radiative effect of
 the volcanic forcing was overwritten by its pre-industrial value**, so volcanic
 eruptions have no effect in that run. The modeling group found this later,
 corrected it and reran the simulation. The corrected run is not (as of Nov 2026) on ESGF, and a
-paper documenting both runs is in preparation (Qion Zhang, pers.
+paper documenting both runs is in preparation (Qiong Zhang, pers.
 comm., July 2026). This explains why EC-Earth3-Veg-LR shows no post-eruption
 cooling in the superposed epoch analysis. Treat this run as a no-volcanic-forcing experiment.
 
@@ -173,12 +173,16 @@ From Jiang Zhu (pers. comm.):
   last-millennium simulation at NCAR. This may be relevant to CESM2's strong
   post-eruption cooling in the superposed epoch analysis.
 
-### ACCESS-ESM1-5 `past1000`: no post-eruption cooling, 1850 offset
+### ACCESS-ESM1-5 `past1000`: volcanic forcing ineffective, 1850 offset
 
 Although forced with eVolv2k, ACCESS-ESM1-5 shows no cooling after large
 eruptions in the superposed epoch analysis (composite ≈ 0.00 °C at lag 1,
-against −0.2 to −0.8 °C in the other volcanically forced runs). The cause is not
-known yet. Separately, its `past1000` GMST sits about 0.44 °C below the CMIP6
+against −0.2 to −0.8 °C in the other volcanically forced runs). Georgina Falster
+identified this shortly after the run was published and is confident that the
+**volcanic forcing did not take effect** in some way: eruptions look as expected
+in other runs of the same model but are completely absent from this `past1000`
+run (pers. comm., July 2026). As with EC-Earth3-Veg-LR, treat it as a
+no-volcanic-forcing experiment. Separately, its `past1000` GMST sits about 0.44 °C below the CMIP6
 historical run at the 1849→1850 junction; a flat offset removes this jump
 before 1850 (`ACCESS-ESM1-5c`; see `ce_fields.stitch_corrections`).
 
