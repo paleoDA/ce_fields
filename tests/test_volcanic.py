@@ -53,3 +53,47 @@ def test_sea_missing_years_are_nan_not_shifted():
 def test_sea_requires_baseline():
     with pytest.raises(ValueError):
         sea(pd.Series([0.0], index=[1000]), [1000], before=0)
+
+
+GAO_SNIPPET = """Version 2 of IVI2 hemispheric and global volcanic stratospheric sulfate injection
+
+  1       2        3       4       5
+Year     NH       SH     Global  Revised?
+
+1256    0.00     0.00     0.00
+1257    0.00     0.00     0.00
+1258  145.80   112.11   257.91   ***
+1259    1.00     0.50     1.50
+1260    0.00     0.00     0.00
+1261    2.00     0.00     2.00
+"""
+
+
+def test_parse_gao2008_and_group_eruptions():
+    from ce_fields.volcanic import parse_gao2008, gao2008_eruptions
+    annual = parse_gao2008(GAO_SNIPPET)
+    assert list(annual['year']) == list(range(1256, 1262))
+    assert annual.set_index('year').loc[1258, 'sulfate'] == pytest.approx(257.91)
+    ev = gao2008_eruptions(annual)
+    # consecutive non-zero years (1258-1259) merge into one eruption dated 1258
+    assert list(ev['yearCE']) == [1258, 1261]
+    assert ev.loc[0, 'sulfate'] == pytest.approx(259.41)
+
+
+def test_largest_eruptions_rejects_unknown_source():
+    with pytest.raises(ValueError):
+        largest_eruptions(source='nope')
+
+
+def test_sea_ensemble_matches_sea_per_member():
+    from ce_fields.volcanic import sea_ensemble
+    rng = np.random.default_rng(0)
+    years = np.arange(1000, 1200)
+    vals = rng.normal(size=(len(years), 4))
+    vals[110, 2] = np.nan                     # a gap in one member
+    events = [1020, 1050, 1105, 1150]
+    comp = sea_ensemble(vals, years, events, before=5, after=10)
+    assert comp.shape == (4, 16)
+    for m in range(4):
+        ref = sea(pd.Series(vals[:, m], index=years), events, 5, 10).mean(axis=0)
+        np.testing.assert_allclose(comp[m], ref.values)

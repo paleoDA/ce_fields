@@ -114,7 +114,9 @@ output.
 The package also ships the eVolv2k v3 volcanic forcing (Toohey and Sigl,
 2017; `ce_fields/data/eVolv2k_v3/`, loaded with `ce_fields.load_evolv2k()`),
 used by `ce_fields.sea()` for superposed epoch analysis of volcanic responses
-(`code/PMIP4_LMR_volcanic_SEA.py`).
+(`code/PMIP4_LMR_volcanic_SEA.py`). For the runs forced with Gao et al. (2008)
+instead (CESM1.1, iCESM; `pmip4_config.VOLCANIC_FORCING`), `ce_fields.load_gao2008()`
+reads that record remotely.
 
 ## Data configuration
 

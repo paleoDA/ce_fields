@@ -32,6 +32,14 @@ YEAR_OFFSETS = {
 #   INM-CM4-8 past1000 (ESGF v20220526): year 1109 is not in any published
 #   file (105001-110812 is followed by 111001-120912), issue #6.
 
+# Volcanic forcing of each paleo run (default 'evolv2k', the PMIP4 protocol;
+# see ce_fields.volcanic). CESM1.1 (the CESM Last Millennium Ensemble) and
+# iCESM were forced with Gao et al. (2008) instead.
+VOLCANIC_FORCING = {
+    'CESM1.1': 'gao2008',
+    'iCESM': 'gao2008',
+}
+
 # PMIP4 paleo runs whose last CE year is below this threshold need a CMIP6
 # historical stitch to reach the present.  1900 gives comfortable margin:
 # some past1000 runs end at 1850 (not 1849), so 1851 would misclassify them;
