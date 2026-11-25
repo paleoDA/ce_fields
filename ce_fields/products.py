@@ -63,7 +63,9 @@ def load_stitched_tas(model_name: str, config: DataConfig = None, use_corrected:
     -------
     xr.DataArray
         Annual-mean tas with a ``year`` coordinate in CE years, plus the
-        original spatial dims (lat, lon).
+        original spatial dims (lat, lon). The year axis is consecutive:
+        interior years missing from the source, or dropped for having fewer
+        than 12 months, are NaN.
         ``attrs['stitched']`` records whether a CMIP6 historical run was
         actually stitched in.
         ``attrs['corrected']`` records whether the bias-corrected data was
@@ -105,6 +107,19 @@ def load_stitched_tas(model_name: str, config: DataConfig = None, use_corrected:
                         for y, n in zip(incomplete.year.values, incomplete.values))
         )
         tas_annual = tas_annual.sel(year=n_months.where(n_months == 12, drop=True).year)
+
+    # Keep the year axis consecutive: interior years that are absent from the
+    # source (e.g. INM-CM4-8's 1109, see pmip4_config) or were just dropped as
+    # incomplete become NaN instead of vanishing, so year-index arithmetic and
+    # windowing downstream stays aligned.
+    years = tas_annual.year.values
+    full_years = np.arange(years.min(), years.max() + 1)
+    if len(full_years) != len(years):
+        missing = np.setdiff1d(full_years, years)
+        label = f"[{model_name}] " if model_name else ""
+        print(f"{label}Filling missing model year(s) with NaN: "
+              + ", ".join(str(int(y)) for y in missing))
+        tas_annual = tas_annual.reindex(year=full_years)
 
     offset = YEAR_OFFSETS.get(model_name, 0)
     if offset:

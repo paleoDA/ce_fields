@@ -168,3 +168,41 @@ def test_load_stitched_tas_drops_partial_final_paleo_year(partial_last_year_conf
     assert int(tas.year.values[-1]) == 1900
     assert np.allclose(tas.sel(year=1850).values, 282.0)
     assert np.allclose(tas.sel(year=slice(1800, 1849)).values, 280.0)
+
+
+@pytest.fixture
+def missing_year_config(tmp_path):
+    """Paleo run with one interior year absent from the source (no time steps
+    at all), mirroring INM-CM4-8 past1000's missing 1109 (issue #6)."""
+    paleo_path = tmp_path / 'paleo.zarr'
+    hist_path  = tmp_path / 'hist.zarr'
+
+    ds = _make_monthly_ds(1800, 1849, val=280.0)
+    ds = ds.sel(time=ds.time.dt.year != 1820)
+    ds.to_zarr(paleo_path, mode='w')
+
+    _make_monthly_ds(1850, 1900, val=282.0).to_zarr(hist_path, mode='w')
+
+    yml = {
+        'environments': {
+            'laptop': {'root': str(tmp_path), 'paths': {}},
+        },
+        'files': {
+            'pmip4_TestModel': {'path': str(paleo_path)},
+            'cmip_hist_TestModel': {'path': str(hist_path)},
+        },
+        'current_environment': 'laptop',
+    }
+    yml_path = tmp_path / 'data_config.yml'
+    yml_path.write_text(yaml.dump(yml))
+    return DataConfig(config_path=yml_path)
+
+
+def test_load_stitched_tas_keeps_missing_year_as_nan(missing_year_config):
+    tas = load_stitched_tas('TestModel', config=missing_year_config)
+    # Consecutive year axis, with the absent year present as NaN rather than
+    # silently dropped (which would shift every window crossing it).
+    np.testing.assert_array_equal(tas.year.values, np.arange(1800, 1901))
+    assert np.isnan(tas.sel(year=1820).values).all()
+    assert np.allclose(tas.sel(year=slice(1800, 1819)).values, 280.0)
+    assert np.allclose(tas.sel(year=slice(1821, 1849)).values, 280.0)
