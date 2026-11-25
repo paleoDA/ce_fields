@@ -10,8 +10,7 @@ Gao et al. (2008, IVI2), which is read remotely from Rutgers.
 The SEA follows the LMR volcanic analysis (LMR_VolcanicResponse_sea.py /
 gmt_volcanicSEA2.py, Emile-Geay 2017): for each event, take the window
 [-before, +after] years around the event year, subtract the mean of the
-`baseline` years preceding it (default: all `before` years), and average the
-anomalies over events.
+`before` years preceding it, and average the anomalies over events.
 """
 import warnings
 from pathlib import Path
@@ -110,15 +109,7 @@ def largest_eruptions(n: int = 20, start: int = None, end: int = None,
     return ev.nlargest(n, size).sort_values('yearCE').reset_index(drop=True)
 
 
-def _check_baseline(before, baseline):
-    baseline = before if baseline is None else baseline
-    if not 1 <= baseline <= before:
-        raise ValueError(f"need 1 <= baseline <= before, got baseline={baseline}, before={before}")
-    return baseline
-
-
-def sea(series: pd.Series, event_years, before: int = 5, after: int = 10,
-        baseline: int = None) -> pd.DataFrame:
+def sea(series: pd.Series, event_years, before: int = 5, after: int = 10) -> pd.DataFrame:
     """Superposed epoch analysis of an annual series.
 
     Parameters
@@ -129,10 +120,8 @@ def sea(series: pd.Series, event_years, before: int = 5, after: int = 10,
     event_years : sequence of int
         Key (lag-0) years, e.g. eruption years.
     before, after : int
-        Window extent: lags ``-before .. +after``.
-    baseline : int, optional
-        Number of pre-event years averaged into the baseline subtracted from
-        each event's window: lags ``-baseline .. -1``. Default: ``before``.
+        Window extent: lags ``-before .. +after``. The mean over lags
+        ``-before .. -1`` is the baseline subtracted from each event's window.
 
     Returns
     -------
@@ -141,24 +130,23 @@ def sea(series: pd.Series, event_years, before: int = 5, after: int = 10,
         event year, with one column per lag. The composite is
         ``.mean(axis=0)`` (pandas skips NaN).
     """
-    baseline = _check_baseline(before, baseline)
+    if before < 1:
+        raise ValueError("before must be >= 1: the pre-event years form the baseline")
     lags = np.arange(-before, after + 1)
-    pre = slice(before - baseline, before)       # lags -baseline .. -1
     s = series.copy()
     s.index = s.index.astype(int)
     rows = {}
     for y in event_years:
         y = int(y)
         win = s.reindex(y + lags).to_numpy(dtype=float)
-        rows[y] = win - np.nanmean(win[pre]) if np.isfinite(win[pre]).any() else np.full(len(lags), np.nan)
+        rows[y] = win - np.nanmean(win[:before]) if np.isfinite(win[:before]).any() else np.full(len(lags), np.nan)
     out = pd.DataFrame.from_dict(rows, orient='index', columns=lags)
     out.index.name = 'event_year'
     out.columns.name = 'lag'
     return out
 
 
-def sea_ensemble(values, years, event_years, before: int = 5, after: int = 10,
-                 baseline: int = None) -> np.ndarray:
+def sea_ensemble(values, years, event_years, before: int = 5, after: int = 10) -> np.ndarray:
     """Composite SEA response of every member of an ensemble.
 
     Applies the same windowing and baseline as `sea` to each member
@@ -170,7 +158,7 @@ def sea_ensemble(values, years, event_years, before: int = 5, after: int = 10,
         Annual values, one column per ensemble member.
     years : array-like of int, shape (n_years,)
         Year of each row. Need not be consecutive; missing years are NaN.
-    event_years, before, after, baseline
+    event_years, before, after
         As in `sea`.
 
     Returns
@@ -179,7 +167,8 @@ def sea_ensemble(values, years, event_years, before: int = 5, after: int = 10,
         Per-member composite (mean over events, NaN-skipping), lags
         ``-before .. +after`` along the second axis.
     """
-    baseline = _check_baseline(before, baseline)
+    if before < 1:
+        raise ValueError("before must be >= 1: the pre-event years form the baseline")
     values = np.asarray(values, dtype=float)
     years = np.asarray(years).astype(int)
     if values.ndim != 2 or values.shape[0] != len(years):
@@ -194,5 +183,5 @@ def sea_ensemble(values, years, event_years, before: int = 5, after: int = 10,
                 wins[k, j] = values[i]
     with np.errstate(invalid='ignore'), warnings.catch_warnings():
         warnings.simplefilter('ignore', RuntimeWarning)   # all-NaN slices -> NaN
-        wins -= np.nanmean(wins[:, before - baseline:before], axis=1, keepdims=True)
+        wins -= np.nanmean(wins[:, :before], axis=1, keepdims=True)
         return np.nanmean(wins, axis=0).T

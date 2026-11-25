@@ -97,17 +97,3 @@ def test_sea_ensemble_matches_sea_per_member():
     for m in range(4):
         ref = sea(pd.Series(vals[:, m], index=years), events, 5, 10).mean(axis=0)
         np.testing.assert_allclose(comp[m], ref.values)
-
-
-def test_sea_baseline_shorter_than_pre_window():
-    from ce_fields.volcanic import sea_ensemble
-    years = np.arange(1000, 1100)
-    s = pd.Series(np.arange(100, dtype=float), index=years)   # linear ramp
-    out = sea(s, [1050], before=5, after=10, baseline=3)
-    # baseline = mean of lags -3..-1 = lag -2, so lag k sits k + 2 above it
-    assert out.loc[1050, 3] == pytest.approx(5.0)
-    assert out.loc[1050].loc[-3:-1].mean() == pytest.approx(0.0)
-    comp = sea_ensemble(s.to_numpy()[:, None], years, [1050], before=5, after=10, baseline=3)
-    np.testing.assert_allclose(comp[0], out.loc[1050].to_numpy())
-    with pytest.raises(ValueError):
-        sea(s, [1050], before=5, after=10, baseline=6)

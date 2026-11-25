@@ -7,8 +7,8 @@ whether each product shows post-volcanic cooling (issues #4, #5: ACCESS-ESM1-5
 and EC-Earth3-Veg-LR).
 
 Method (as in the LMR volcanic analysis, cf. Fig. 4 of the LMR volcanic GRL
-paper): for each eruption take the window of lags -5..+10 years around the
-eruption year, subtract the mean of the 3 pre-eruption years, and average
+paper): for each eruption take the window of lags -3..+10 years around the
+eruption year, subtract the mean of its 3 pre-eruption years, and average
 over eruptions (ce_fields.volcanic.sea).
 
 Eruptions: the N_EVENTS largest eruptions of each volcanic forcing record
@@ -66,8 +66,7 @@ TABLE_FOLDER.mkdir(parents=True, exist_ok=True)
 # =============================================================================
 # PARAMETERS
 # =============================================================================
-BEFORE, AFTER = 5, 10            # SEA window: lags -BEFORE..+AFTER
-BASELINE = 3                     # pre-eruption mean over lags -BASELINE..-1
+BEFORE, AFTER = 3, 10            # SEA window: lags -BEFORE..+AFTER; baseline = lags -BEFORE..-1
 N_EVENTS = 20                    # number of eruptions, as in the 2017 LMR analysis
 EVENT_RANGE = (1000 + BEFORE,    # LMR Online starts in 1000 CE
                1849 - AFTER)     # PMIP4 paleo runs end in 1849/1850
@@ -104,7 +103,7 @@ pmip_labels = []
 for model in gmst.columns:
     label = display_name(model)          # the CSV holds the corrected ACCESS-ESM1-5/CESM2 data
     forcing = VOLCANIC_FORCING.get(model, 'evolv2k')
-    composites[label] = sea(gmst[model], events[forcing], BEFORE, AFTER, BASELINE).mean(axis=0)
+    composites[label] = sea(gmst[model], events[forcing], BEFORE, AFTER).mean(axis=0)
     pmip_labels.append(label)
 
 # =============================================================================
@@ -118,8 +117,8 @@ for version, (label, _) in LMR_VERSIONS.items():
     years = da[ydim].values.astype(int)
     members = da.transpose(ydim, ...).values.reshape(len(years), -1)   # (year, member)
     s = pd.Series(np.nanmean(members, axis=1), index=years)
-    composites[label] = sea(s, events['evolv2k'], BEFORE, AFTER, BASELINE).mean(axis=0)
-    member_comp = sea_ensemble(members, years, events['evolv2k'], BEFORE, AFTER, BASELINE)
+    composites[label] = sea(s, events['evolv2k'], BEFORE, AFTER).mean(axis=0)
+    member_comp = sea_ensemble(members, years, events['evolv2k'], BEFORE, AFTER)
     lo, hi = np.nanpercentile(member_comp, QUANTILES, axis=0)
     envelopes[label] = (lo, hi)
     composites[f'{label} q{QUANTILES[0]:g}'] = pd.Series(lo, index=composites[label].index)
@@ -131,7 +130,7 @@ comp = pd.DataFrame(composites).T
 comp.index.name = 'product'
 comp.to_csv(TABLE_FOLDER / 'PMIP4_LMR_volcanic_SEA.csv', float_format='%.4f')
 
-print(f"\nComposite GMST response (°C, relative to lags -{BASELINE}..-1):")
+print(f"\nComposite GMST response (°C, relative to lags -{BEFORE}..-1):")
 main = comp.loc[pmip_labels + lmr_labels]
 summary = pd.DataFrame({
     'forcing': [VOLCANIC_FORCING.get(m, 'evolv2k') for m in gmst.columns] + ['evolv2k'] * len(lmr_labels),
@@ -170,7 +169,7 @@ for ax, (tag, title, labels, color_of) in zip(axs, panels):
     ax.legend(loc='lower right', fontsize=9, frameon=False)
     for side in ('top', 'right'):
         ax.spines[side].set_visible(False)
-axs[0].set_ylabel(f'GMST anomaly (°C, rel. to {BASELINE} pre-eruption years)')
+axs[0].set_ylabel(f'GMST anomaly (°C, rel. to {BEFORE} pre-eruption years)')
 axs[1].text(0.02, 0.02, f'Envelopes: {QUANTILES[0]:g}–{QUANTILES[1]:g}% of ensemble-member composites',
             transform=axs[1].transAxes, fontsize=8, color='dimgray')
 fig.suptitle(f'Superposed epoch analysis: {N_EVENTS} largest eruptions, '
