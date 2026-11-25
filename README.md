@@ -12,6 +12,8 @@ projects can share them without duplicating loading logic:
 - **Instrumental:** gridded temperature products (HadCRUT5, CRUTEM5, Berkeley
   Earth, DCENT-I), always loaded by explicit version (`instrumental`).
 
+Note: this was primarily meant to grease the wheels of data loading for the USC Climate Dynamics group. The data registry will need to be heavily edited to be useful to anyone else, but the repository provides a roadmap for how to organize such files, and how to access their data painlessly once paths are set up.
+
 ## Install
 
 With conda (pinned, tested versions; includes the regridding and script
@@ -111,12 +113,99 @@ pre-1850 stitch corrections derived from that table
 (`ce_fields.stitch_corrections`), so GMST-based analyses need none of the raw
 output.
 
+![PMIP4 + CMIP6-historical GMST, stitch-corrected, 30-yr lowpass](results/figures/PMIP4_GMST_spaghetti_corrected_smoothed.png)
+
+*PMIP4 GMST (anomalies relative to 1951–1980, 30-yr lowpass), stitched to
+CMIP6 historical where needed, with the pre-1850 corrections applied
+(`ACCESS-ESM1-5c`, `CESM2c`). From `code/PMIP4_1850_stitch.ipynb`.*
+
 The package also ships the eVolv2k v3 volcanic forcing (Toohey and Sigl,
 2017; `ce_fields/data/eVolv2k_v3/`, loaded with `ce_fields.load_evolv2k()`),
 used by `ce_fields.sea()` for superposed epoch analysis of volcanic responses
 (`code/PMIP4_LMR_volcanic_SEA.py`). For the runs forced with Gao et al. (2008)
 instead (CESM1.1, iCESM; `pmip4_config.VOLCANIC_FORCING`), `ce_fields.load_gao2008()`
 reads that record remotely.
+
+![Superposed epoch analysis of PMIP4 and LMR GMST](results/figures/PMIP4_LMR_volcanic_SEA.png)
+
+*Composite GMST response to the 20 largest eruptions of 1003–1839 CE, relative
+to the 3 pre-eruption years. (a) PMIP4 runs, each composited on the eruptions of
+its own forcing record. (b) LMR versions: composite of the ensemble mean, with
+the 2.5–97.5% range of the ensemble-member composites. From
+`code/PMIP4_LMR_volcanic_SEA.py`.*
+
+## Idiosyncrasies
+
+Known quirks of individual simulations or reconstructions. Some were reported
+by the modeling groups (personal communication); others were found while
+building this package.
+
+### EC-Earth3-Veg-LR `past1000`: no volcanic forcing in the ESGF run
+
+The `past1000` run archived on ESGF (the one used here; reference:
+[Döscher et al., 2022](https://doi.org/10.5194/gmd-15-2973-2022)) was meant to
+include all PMIP4 transient forcings: orbital, solar, greenhouse gases and land
+use, with dynamic vegetation from LPJ-GUESS. However, the **radiative effect of
+the volcanic forcing was overwritten by its pre-industrial value**, so volcanic
+eruptions have no effect in that run. The modeling group found this later,
+corrected it and reran the simulation. The corrected run is not (as of Nov 2026) on ESGF, and a
+paper documenting both runs is in preparation (Qiong Zhang, pers.
+comm., July 2026). This explains why EC-Earth3-Veg-LR shows no post-eruption
+cooling in the superposed epoch analysis. Treat this run as a no-volcanic-forcing experiment.
+
+### CESM2 `past1000` (run 002): warming drift and strong volcanic aerosol
+
+From Jiang Zhu (pers. comm.):
+
+- **Warming drift.** `past1000.002` was branched from an 850 CE control run
+  that included a "background" volcanic emission representing an average
+  850 CE state. When `past1000` started, that background emission was removed at
+  once and replaced by the transient PMIP4 volcanic forcing. The abrupt change
+  causes a warming trend through the simulation. One suggested fix is to detrend
+  `past1000.002` using the corresponding 850 CE control, if it is still
+  available. Here, the trend is instead removed by a linear detrend of the
+  `past1000` GMST itself, which is the pre-1850 correction behind `CESM2c` (see
+  `ce_fields.stitch_corrections` and `code/PMIP4_1850_stitch.ipynb`).
+- **High stratospheric aerosol optical depth (SAOD).** CESM2's volcanic SAOD is
+  higher than in the other models, for unknown reasons. The forcing was
+  implemented by Mike Mills, now retired. The run used WACCM6ma, the first time
+  a high-top model with stratospheric chemistry and dynamics was used for a
+  last-millennium simulation at NCAR. This may be relevant to CESM2's strong
+  post-eruption cooling in the superposed epoch analysis.
+
+### ACCESS-ESM1-5 `past1000`: volcanic forcing ineffective, 1850 offset
+
+Although forced with eVolv2k, ACCESS-ESM1-5 shows no cooling after large
+eruptions in the superposed epoch analysis (composite ≈ 0.00 °C at lag 1,
+against −0.2 to −0.8 °C in the other volcanically forced runs). Georgina Falster
+identified this shortly after the run was published and is confident that the
+**volcanic forcing did not take effect** in some way: eruptions look as expected
+in other runs of the same model but are completely absent from this `past1000`
+run (pers. comm., July 2026). As with EC-Earth3-Veg-LR, treat it as a
+no-volcanic-forcing experiment. Separately, its `past1000` GMST sits about 0.44 °C below the CMIP6
+historical run at the 1849→1850 junction; a flat offset removes this jump
+before 1850 (`ACCESS-ESM1-5c`; see `ce_fields.stitch_corrections`).
+
+### MPI-ESM1-2-LR `past2k`: model years 7001–8850
+
+The `past2k` files are labeled with model years 7001–8850, i.e. 1–1850 CE, so
+`pmip4_config.YEAR_OFFSETS` subtracts 7000. An earlier offset of 7001 put every
+value one year early. The run ends in 1850, which overlaps the historical run's
+first year; the paleo value is kept.
+
+### INM-CM4-8 `past1000`: year 1109 missing
+
+Year 1109 is absent from the published ESGF files (`105001-110812` is followed
+by `111001-120912`), so it cannot be recovered. `load_stitched_tas()` keeps the
+year axis consecutive and returns 1109 as NaN, and it is NaN in
+`PMIP4_GMST_anomalies.csv`.
+
+### CESM1.1 and iCESM: Gao et al. (2008) volcanic forcing
+
+These two runs were forced with Gao et al. (2008, IVI2) rather than the PMIP4
+eVolv2k record. The two records differ in eruption dates (often by a year) and
+in which eruptions are largest, so volcanic analyses should use each run's own
+record (`pmip4_config.VOLCANIC_FORCING`).
 
 ## Data configuration
 

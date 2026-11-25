@@ -33,7 +33,7 @@ YEAR_OFFSETS = {
 #   file (105001-110812 is followed by 111001-120912), issue #6.
 
 # Volcanic forcing of each paleo run (default 'evolv2k', the PMIP4 protocol;
-# see ce_fields.volcanic). CESM1.1 (the CESM Last Millennium Ensemble) and
+# see ce_fields.volcanic). CESM1.1 and
 # iCESM were forced with Gao et al. (2008) instead.
 VOLCANIC_FORCING = {
     'CESM1.1': 'gao2008',

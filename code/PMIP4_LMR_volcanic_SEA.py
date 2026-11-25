@@ -34,7 +34,7 @@ LMR GMST ensembles (lmr_*_gmst keys in data_config.yml)
 
 Output
 ------
-results/figures/PMIP4_LMR_volcanic_SEA.pdf
+results/figures/PMIP4_LMR_volcanic_SEA.pdf (and .png, shown in README.md)
     (a) PMIP4 models, (b) LMR v2.1 / Online / Seasonal with 95% envelopes.
 results/tables/PMIP4_LMR_volcanic_SEA.csv
     The composites (rows: product, columns: lag), with the LMR quantiles as
@@ -180,4 +180,5 @@ fig.tight_layout(rect=(0, 0, 1, 0.92))
 
 out = FIGURE_FOLDER / 'PMIP4_LMR_volcanic_SEA.pdf'
 fig.savefig(out, dpi=300, bbox_inches='tight')
+fig.savefig(out.with_suffix('.png'), dpi=200, bbox_inches='tight')   # shown in README.md
 print(f"\nSaved: {out.resolve()}")
