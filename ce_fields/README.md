@@ -73,6 +73,13 @@ pre-1850 stitch corrections derived from that table
 (`ce_fields.stitch_corrections`), so GMST-based analyses need none of the raw
 output.
 
+The package also ships the eVolv2k v3 volcanic forcing (Toohey and Sigl,
+2017; `ce_fields/data/eVolv2k_v3/`, loaded with `ce_fields.load_evolv2k()`),
+used by `ce_fields.sea()` for superposed epoch analysis of volcanic responses
+(`code/PMIP4_LMR_volcanic_SEA.py`). For the runs forced with Gao et al. (2008)
+instead (CESM1.1, iCESM; `pmip4_config.VOLCANIC_FORCING`), `ce_fields.load_gao2008()`
+reads that record remotely.
+
 ## Data configuration
 
 `ce_fields/data_config.yml` (shipped with the package) registers every file,
@@ -99,7 +106,7 @@ from the hostname, or set with the `DATA_ENV` environment variable.
 
 ## Repository layout
 
-- `ce_fields/` — installable package (config, I/O, stitching, bias correction, high-level `products` API; LMR and Neukom2019 loaders), with `data_config.yml` and the packaged GMST table in `data/`
-- `code/` — pipeline and diagnostic scripts (`PMIP4_GMST_sanity_check.py`, `apply_1850_adjustments.py`, `check_pmip4_zarr.py`, `Antarctic_BH_surface_temp.py`), and `PMIP4_1850_stitch.ipynb`, the calibration notebook deriving the pre-1850 bias corrections
+- `ce_fields/` — installable package (config, I/O, stitching, bias correction, high-level `products` API; LMR and Neukom2019 loaders), with `data_config.yml`, the packaged GMST table and eVolv2k forcing in `data/`
+- `code/` — pipeline and diagnostic scripts (`PMIP4_GMST_sanity_check.py`, `apply_1850_adjustments.py`, `check_pmip4_zarr.py`, `Antarctic_BH_surface_temp.py`, `PMIP4_LMR_volcanic_SEA.py`), and `PMIP4_1850_stitch.ipynb`, the calibration notebook deriving the pre-1850 bias corrections
 - `tests/` — pytest suite (no HPC data required)
 - `results/` — checked-in figures and tables (stitching diagnostics, CESM2 GMST)

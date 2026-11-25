@@ -7,6 +7,7 @@ from .products import load_stitched_tas, load_corrected_tas, compute_gmst
 from .lmr import LMR
 from .neukom import Neukom2019
 from .instrumental import Instrumental
+from .volcanic import EVOLV2K_FILE, load_evolv2k, load_gao2008, largest_eruptions, sea, sea_ensemble
 
 __all__ = [
     'DataConfig',
@@ -23,4 +24,10 @@ __all__ = [
     'LMR',
     'Neukom2019',
     'Instrumental',
+    'EVOLV2K_FILE',
+    'load_evolv2k',
+    'load_gao2008',
+    'largest_eruptions',
+    'sea',
+    'sea_ensemble',
 ]
