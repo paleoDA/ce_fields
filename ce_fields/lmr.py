@@ -185,10 +185,18 @@ class LMR:
             - 'gmst' : global mean surface temperature ensemble
             Default 'tas'.
         annualize : bool, optional
-            If True, convert sub-annual data to annual means. Ignored for variable='gmst'
-            (annualization is handled internally). Default True.
+            If True, convert sub-annual data to annual means. Default True.
+            LMR Seasonal (tas and gmst) is quarterly, with one time stamp per
+            season on its middle month (Jan = DJF, Apr = MAM, Jul = JJA,
+            Oct = SON), so its "annual" mean is the four seasons labeled with
+            a year: December of the previous year through November, not the
+            calendar year. With annualize=False, seasonal data keep this
+            native resolution on a decimal-year `time` axis; seasonal gmst
+            also carries a `season` coordinate ('DJF', 'MAM', 'JJA', 'SON').
+            No effect for v2.1 and online gmst, which are already annual.
         time_slice : tuple, optional
-            Tuple of (start_year, end_year). Either can be None (no bound). Default None.
+            Tuple of (start_year, end_year), inclusive of every time step in
+            both end years. Either can be None (no bound). Default None.
         load_members : bool, optional
             For variable='tas', version='seasonal': stream all spatial members remotely.
             Ignored for variable='gmst' (gmst files always contain the full ensemble).
@@ -212,6 +220,7 @@ class LMR:
         --------
         >>> lmr = LMR.from_version('seasonal')                           # tas ensemble mean
         >>> lmr = LMR.from_version('seasonal', variable='gmst')          # GMST ensemble
+        >>> lmr = LMR.from_version('seasonal', variable='gmst', annualize=False)   # quarterly
         >>> lmr = LMR.from_version('seasonal', variable='tas', load_members=True)
         >>> lmr = LMR.from_version('v2.1', variable='gmst', time_slice=(1000, 2000))
         """
@@ -227,7 +236,7 @@ class LMR:
         if variable == 'gmst':
             filepath = config.get_file_path(f'{prefix}_gmst')
             print(f"Loading LMR {version} GMST from: {filepath}")
-            data = cls._load_gmst(version, filepath)
+            data = cls._load_gmst(version, filepath, annualize)
             actual_var = 'gmst'
 
         else:  # variable == 'tas'
@@ -262,14 +271,16 @@ class LMR:
         return cls(data, version, actual_var)
 
     @classmethod
-    def _load_gmst(cls, version: str, filepath: str) -> xr.DataArray:
+    def _load_gmst(cls, version: str, filepath: str, annualize: bool = True) -> xr.DataArray:
         """
         Load pre-computed GMST ensemble for any LMR version.
 
         Returns DataArray with version-specific dimensions:
         - v2.1    : (time=2001, MCrun=20, members=100), time in integer years CE
         - online  : (mc_iteration=50, ensemble_member=100, year=1001)
-        - seasonal: (year, ens_num=800), annualised from quarterly data
+        - seasonal: (year, ens_num=800), Dec-Nov means of the quarterly data,
+                    or with annualize=False (time=4804, ens_num=800), time in
+                    decimal years and a `season` coordinate along it
         """
         if version == 'v2.1':
             ds = xr.open_dataset(filepath, decode_times=False)
@@ -290,7 +301,10 @@ class LMR:
                                      engine='h5netcdf', decode_times=cftime_coder)
             else:
                 ds = xr.open_dataset(fp, decode_times=cftime_coder)
-            return ds['GMT'].groupby('time.year').mean('time')
+            gmt = ds['GMT']
+            seasons = {1: 'DJF', 4: 'MAM', 7: 'JJA', 10: 'SON'}
+            gmt = gmt.assign_coords(season=('time', [seasons[m] for m in gmt['time'].dt.month.values]))
+            return cls._process_time_dimension(gmt, version, annualize)
 
     @classmethod
     def _load_ensemble_members(cls, filepath: str, combine: str, annualize: bool,
@@ -543,13 +557,14 @@ class LMR:
             elif end_year is not None:
                 data = data.sel(year=(data.year <= end_year))
         else:
-            # All versions now have numeric 'time' coordinate
+            # Numeric 'time' coordinate, possibly decimal (sub-annual): keep
+            # every time step of the end year, not just those before its 1 Jan
             if start_year is not None and end_year is not None:
-                data = data.sel(time=(data.time >= start_year) & (data.time <= end_year))
+                data = data.sel(time=(data.time >= start_year) & (data.time < end_year + 1))
             elif start_year is not None:
                 data = data.sel(time=(data.time >= start_year))
             elif end_year is not None:
-                data = data.sel(time=(data.time <= end_year))
+                data = data.sel(time=(data.time < end_year + 1))
 
         # Format output message
         if start_year is not None and end_year is not None:
