@@ -87,7 +87,7 @@ files:
 
   pmip4_CESM1.1:
     path: "{pmip4_data}/netCDF/CESM1.1"
-    description: "CESM1.1 PMIP4 past1000 monthly TREFHT in native CAM NetCDF format (HPC only)"
+    description: "CESM1.1 PMIP4 past2k monthly TREFHT (1–2005 CE; Zhong et al. 2018) in native CAM NetCDF format (HPC only)"
 
   pmip4_CESM2:
     path: "{pmip4_data}/netCDF/CESM2/corrected/TREFHT_Amon_CESM2_past1000_run002_1850corrected.nc"

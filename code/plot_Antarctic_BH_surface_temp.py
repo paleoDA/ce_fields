@@ -33,12 +33,13 @@ import xarray as xr
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
-sys.path.insert(0, '..')
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ce_fields.data_config import DataConfig
 from ce_fields.pmip4_config import get_model_colors
 
-DATA_FOLDER = Path('../results/data')
-FIGURE_FOLDER = Path('../results/figures')
+REPO_ROOT = Path(__file__).resolve().parent.parent   # outputs land in ce_fields/results wherever the script is run from
+DATA_FOLDER = REPO_ROOT / 'results' / 'data'
+FIGURE_FOLDER = REPO_ROOT / 'results' / 'figures'
 FIGURE_FOLDER.mkdir(parents=True, exist_ok=True)
 
 # =============================================================================

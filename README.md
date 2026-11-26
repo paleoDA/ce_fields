@@ -122,8 +122,8 @@ CMIP6 historical where needed, with the pre-1850 corrections applied
 The package also ships the eVolv2k v3 volcanic forcing (Toohey and Sigl,
 2017; `ce_fields/data/eVolv2k_v3/`, loaded with `ce_fields.load_evolv2k()`),
 used by `ce_fields.sea()` for superposed epoch analysis of volcanic responses
-(`code/PMIP4_LMR_volcanic_SEA.py`). For the runs forced with Gao et al. (2008)
-instead (CESM1.1, iCESM; `pmip4_config.VOLCANIC_FORCING`), `ce_fields.load_gao2008()`
+(`code/PMIP4_LMR_volcanic_SEA.py`). For iCESM, which was forced with Gao et al. (2008)
+instead (`pmip4_config.VOLCANIC_FORCING`), `ce_fields.load_gao2008()`
 reads that record remotely.
 
 ![Superposed epoch analysis of PMIP4 and LMR GMST](results/figures/PMIP4_LMR_volcanic_SEA.png)
@@ -200,12 +200,20 @@ by `111001-120912`), so it cannot be recovered. `load_stitched_tas()` keeps the
 year axis consecutive and returns 1109 as NaN, and it is NaN in
 `PMIP4_GMST_anomalies.csv`.
 
-### CESM1.1 and iCESM: Gao et al. (2008) volcanic forcing
+### iCESM: Gao et al. (2008) volcanic forcing
 
-These two runs were forced with Gao et al. (2008, IVI2) rather than the PMIP4
-eVolv2k record. The two records differ in eruption dates (often by a year) and
-in which eruptions are largest, so volcanic analyses should use each run's own
-record (`pmip4_config.VOLCANIC_FORCING`).
+iCESM was forced with Gao et al. (2008, IVI2) rather than the PMIP4 eVolv2k
+record (Brady et al., 2019). The two records differ in eruption dates (often by
+a year) and in which eruptions are largest, so volcanic analyses should use each
+run's own record (`pmip4_config.VOLCANIC_FORCING`).
+
+CESM1.1 (the `past2k` run, 1–2005 CE) is *not* Gao-forced, although earlier
+versions of this package said so. It uses the PMIP4 EVA (eVolv2k) aerosol, with
+the aerosol mass scaled by 1.67 so that CESM, which assumes a constant effective
+radius, matches the EVA optical depth ([Zhong et al., 2018, forcing
+files](https://doi.org/10.5281/zenodo.1304427)). Its GMST agrees: averaged over
+the 24 largest eruptions of 997–1900, it cools by 0.29 °C over lags 0–2 with
+eVolv2k dates, against 0.13 °C with Gao dates.
 
 ## Data configuration
 

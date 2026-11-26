@@ -16,7 +16,7 @@ import cftime as _cftime
 from pathlib import Path
 from tqdm import tqdm
 
-sys.path.insert(0, '..')
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ce_fields.data_config import DataConfig
 from ce_fields.io import open_nc_or_zarr
 from ce_fields.stitch_corrections import GMST_ANOMALIES_CSV
@@ -45,7 +45,8 @@ class _Tee:
 
 config = DataConfig()
 
-_log_dir = Path('../results/logs')
+REPO_ROOT = Path(__file__).resolve().parent.parent   # outputs land in ce_fields/results wherever the script is run from
+_log_dir = REPO_ROOT / 'results' / 'logs'
 _log_dir.mkdir(parents=True, exist_ok=True)
 _log_path = _log_dir / 'PMIP4_GMST_sanity_check.log'
 _logfile  = open(_log_path, 'w')
@@ -60,8 +61,8 @@ CMIP_HIST_MODELS = get_cmip_hist_models(config)
 
 CFTIME_CODER = xr.coders.CFDatetimeCoder(use_cftime=True)
 
-FIGURE_FOLDER = Path('../results/figures/')
-DATA_FOLDER   = Path('../results/data/')
+FIGURE_FOLDER = REPO_ROOT / 'results' / 'figures'
+DATA_FOLDER   = REPO_ROOT / 'results' / 'data'
 FIGURE_FOLDER.mkdir(parents=True, exist_ok=True)
 DATA_FOLDER.mkdir(parents=True, exist_ok=True)
 

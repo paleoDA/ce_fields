@@ -19,8 +19,9 @@ Needs the real PMIP4 data mounted (HPC only). Run from the code/ directory:
 """
 
 import sys
+from pathlib import Path
 
-sys.path.insert(0, '..')
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ce_fields.data_config import DataConfig
 from ce_fields.io import open_nc_or_zarr
 from ce_fields.pmip4_config import get_pmip4_models, get_cmip_hist_models, MODEL_VAR

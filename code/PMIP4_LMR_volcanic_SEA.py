@@ -18,7 +18,7 @@ lag-0 years 1005-1839. Lag 0 is the eruption year of that record.
   - eVolv2k v3 (ranked by VSSI): the PMIP4 protocol forcing, used for most
     PMIP4 runs and for all LMR versions.
   - Gao et al. (2008) IVI2 (ranked by global sulfate injection; read
-    remotely): for the runs forced with it, CESM1.1 and iCESM
+    remotely): for the run forced with it, iCESM
     (pmip4_config.VOLCANIC_FORCING).
 
 LMR: the SEA is applied to every ensemble member. The line is the composite
@@ -52,14 +52,15 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-sys.path.insert(0, '..')
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ce_fields import DataConfig, LMR, display_name
 from ce_fields.pmip4_config import get_model_colors, VOLCANIC_FORCING
 from ce_fields.stitch_corrections import load_gmst_anomalies
 from ce_fields.volcanic import largest_eruptions, sea, sea_ensemble
 
-FIGURE_FOLDER = Path('../results/figures')
-TABLE_FOLDER = Path('../results/tables')
+REPO_ROOT = Path(__file__).resolve().parent.parent   # outputs land in ce_fields/results wherever the script is run from
+FIGURE_FOLDER = REPO_ROOT / 'results' / 'figures'
+TABLE_FOLDER = REPO_ROOT / 'results' / 'tables'
 FIGURE_FOLDER.mkdir(parents=True, exist_ok=True)
 TABLE_FOLDER.mkdir(parents=True, exist_ok=True)
 
@@ -174,7 +175,8 @@ axs[1].text(0.02, 0.02, f'Envelopes: {QUANTILES[0]:g}–{QUANTILES[1]:g}% of ens
             transform=axs[1].transAxes, fontsize=8, color='dimgray')
 fig.suptitle(f'Superposed epoch analysis: {N_EVENTS} largest eruptions, '
              f'{EVENT_RANGE[0]}–{EVENT_RANGE[1]} CE', fontsize=16, fontweight='bold', y=0.995)
-fig.text(0.5, 0.935, 'eVolv2k v3 eruptions; Gao et al. (2008) for the runs it forced (CESM1.1, iCESM)',
+gao_note = ', '.join(sorted(gao_models))
+fig.text(0.5, 0.935, f'eVolv2k v3 eruptions; Gao et al. (2008) for the runs it forced ({gao_note})',
          ha='center', fontsize=10, color='dimgray')
 fig.tight_layout(rect=(0, 0, 1, 0.92))
 

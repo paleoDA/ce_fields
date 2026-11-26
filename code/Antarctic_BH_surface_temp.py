@@ -32,7 +32,7 @@ import numpy as np
 import xarray as xr
 from pathlib import Path
 
-sys.path.insert(0, '..')
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ce_fields.data_config import DataConfig
 from ce_fields.pmip4_config import get_pmip4_models
 from ce_fields.products import load_corrected_tas
@@ -72,7 +72,8 @@ print(f"[{_ts()}] Environment : {config.environment}")
 
 PMIP4_MODELS = get_pmip4_models(config)
 
-DATA_FOLDER = Path('../results/data')
+REPO_ROOT = Path(__file__).resolve().parent.parent   # outputs land in ce_fields/results wherever the script is run from
+DATA_FOLDER = REPO_ROOT / 'results' / 'data'
 DATA_FOLDER.mkdir(parents=True, exist_ok=True)
 
 print(f"[{_ts()}] Sites       : {SITE_NAMES}")
