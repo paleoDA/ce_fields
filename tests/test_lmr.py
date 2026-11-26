@@ -127,6 +127,28 @@ class TestLMRClass:
         assert lmr.data.sizes['mc_iteration'] == 50
         assert lmr.data.sizes['ensemble_member'] == 100
 
+    @pytest.mark.skipif(
+        not os.path.exists(DataConfig().get_file_path('lmr_seasonal_gmst')),
+        reason="LMR seasonal GMST file not found"
+    )
+    def test_seasonal_gmst_annualize_false_keeps_seasons(self):
+        """annualize=False keeps the four seasons per year (issue #13)."""
+        q = LMR.from_version('seasonal', variable='gmst', annualize=False,
+                             time_slice=(1800, 1850)).data
+        assert q.dims == ('time', 'ens_num')
+        assert np.issubdtype(q['time'].dtype, np.floating)
+        years, counts = np.unique(np.floor(q['time'].values).astype(int), return_counts=True)
+        assert years[0] == 1800 and years[-1] == 1850   # both end years whole
+        assert np.all(counts == 4)
+        assert list(q['season'].values[:4]) == ['DJF', 'MAM', 'JJA', 'SON']
+
+        # The default annual mean is the mean of those four (Dec-Nov) seasons
+        a = LMR.from_version('seasonal', variable='gmst', time_slice=(1800, 1850)).data
+        assert a.dims == ('year', 'ens_num')
+        yr = xr.DataArray(np.floor(q['time'].values).astype(int), dims='time', name='year')
+        xr.testing.assert_allclose(q.groupby(yr).mean('time').drop_vars('season', errors='ignore'),
+                                   a.drop_vars('season', errors='ignore'))
+
     def test_from_version_seasonal_members(self):
         """Test loading LMR seasonal ensemble members with lazy loading."""
         config = DataConfig()
