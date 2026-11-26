@@ -20,9 +20,10 @@ CAT = catalog()
 REQUIRED_FIELDS = ('product', 'version', 'variable', 'kind', 'var', 'version_check')
 
 
-def _found(product, version, variable='tas', kind='mean'):
+def _found(product, version, variable='tas', kind='mean', region='grid'):
     row = CAT[(CAT['product'] == product) & (CAT['version'] == version)
-              & (CAT['variable'] == variable) & (CAT['kind'] == kind)]
+              & (CAT['variable'] == variable) & (CAT['kind'] == kind)
+              & (CAT['region'] == region)]
     return not row.empty and bool(row['found'].iloc[0])
 
 
@@ -40,7 +41,7 @@ class TestCatalog:
             assert entry['product'] in PRODUCTS
 
     def test_keys_are_unique_per_version(self):
-        assert not CAT.duplicated(['product', 'version', 'variable', 'kind']).any()
+        assert not CAT.duplicated(['product', 'version', 'variable', 'kind', 'region']).any()
 
     def test_hadcrut5_versions_registered(self):
         versions = set(CAT.loc[CAT['product'] == 'hadcrut5', 'version'])
@@ -51,26 +52,40 @@ class TestErrors:
 
     def test_version_is_required(self):
         with pytest.raises(TypeError):
-            Instrumental.from_version('hadcrut5')
+            Instrumental.field('hadcrut5')
 
     def test_numeric_version_rejected(self):
         with pytest.raises(TypeError, match='string'):
-            Instrumental.from_version('hadcrut5', 5.1)
+            Instrumental.field('hadcrut5', 5.1)
 
     def test_unknown_version_lists_registered(self):
         with pytest.raises(ValueError, match='Registered versions'):
-            Instrumental.from_version('hadcrut5', '9.9.9.9')
+            Instrumental.field('hadcrut5', '9.9.9.9')
 
     def test_unknown_product(self):
         with pytest.raises(ValueError, match='Unknown product'):
-            Instrumental.from_version('bogus', '1.0')
+            Instrumental.field('bogus', '1.0')
+
+    def test_from_version_deprecated(self):
+        # warns, names the replacement, then behaves as field() (here: its error)
+        with pytest.warns(FutureWarning, match=r"Instrumental\.field\('hadcrut5', '9\.9\.9\.9'"):
+            with pytest.raises(ValueError, match='Registered versions'):
+                Instrumental.from_version('hadcrut5', '9.9.9.9')
+
+    def test_series_region_validated(self):
+        with pytest.raises(ValueError, match='region must be'):
+            Instrumental.series('hadcrut5', '5.2.0.0', region='tropics')
+
+    def test_unregistered_series_lists_available(self):
+        with pytest.raises(ValueError, match='Available'):
+            Instrumental.series('hadcrut5', '5.0.2.0')
 
 
 @pytest.mark.skipif(not _found('hadcrut5', '5.1.0.0'), reason='HadCRUT5 5.1.0.0 not found')
 class TestHadCRUT5:
 
     def test_harmonized_annual_field(self):
-        hc = Instrumental.from_version('hadcrut5', '5.1.0.0')
+        hc = Instrumental.field('hadcrut5', '5.1.0.0')
         assert hc.data.dims == ('year', 'lat', 'lon')
         assert hc.data.attrs['version'] == '5.1.0.0'
         assert hc.label == 'HadCRUT5 v5.1.0.0'
@@ -78,19 +93,19 @@ class TestHadCRUT5:
         assert np.all(np.diff(hc.data.lat) > 0)
 
     def test_incomplete_final_year_dropped(self):
-        hc = Instrumental.from_version('hadcrut5', '5.1.0.0', annualize=False)
+        hc = Instrumental.field('hadcrut5', '5.1.0.0', annualize=False)
         last = int(hc.data['year_of'].max())
         n_last = int((hc.data['year_of'] == last).sum())
-        annual = Instrumental.from_version('hadcrut5', '5.1.0.0')
+        annual = Instrumental.field('hadcrut5', '5.1.0.0')
         assert (int(annual.years.max()) == last) == (n_last == 12)
 
     def test_gmst_recentered(self):
-        g = Instrumental.from_version('hadcrut5', '5.1.0.0').gmst(ref_period=(1951, 1980))
+        g = Instrumental.field('hadcrut5', '5.1.0.0').gmst(ref_period=(1951, 1980))
         assert abs(float(g.sel(year=slice(1951, 1980)).mean())) < 1e-10
         assert g.attrs['baseline'] == (1951, 1980)
 
     def test_lon_convention(self):
-        hc = Instrumental.from_version('hadcrut5', '5.1.0.0', lon_convention='-180_180')
+        hc = Instrumental.field('hadcrut5', '5.1.0.0', lon_convention='-180_180')
         assert float(hc.data.lon.min()) < 0
 
     def test_version_check_rejects_wrong_file(self):
@@ -98,21 +113,53 @@ class TestHadCRUT5:
         entry = config.config['files']['instr_hadcrut5_5.1.0.0_tas_mean']
         entry['version_check'] = {'attr': 'version', 'contains': 'HadCRUT.0.0.0.0'}
         with pytest.raises(ValueError, match='Version check failed'):
-            Instrumental.from_version('hadcrut5', '5.1.0.0', config=config)
+            Instrumental.field('hadcrut5', '5.1.0.0', config=config)
 
 
 @pytest.mark.skipif(not _found('hadcrut5', '5.0.2.0'), reason='HadCRUT5 5.0.2.0 not found')
 def test_versions_differ():
     """Releases revise the past: the reason versions must be explicit."""
-    a = Instrumental.from_version('hadcrut5', '5.0.2.0').gmst()
-    b = Instrumental.from_version('hadcrut5', '5.1.0.0').gmst()
+    a = Instrumental.field('hadcrut5', '5.0.2.0').gmst()
+    b = Instrumental.field('hadcrut5', '5.1.0.0').gmst()
     common = np.intersect1d(a.year, b.year)
     assert float(abs(a.sel(year=common) - b.sel(year=common)).max()) > 0
 
 
 @pytest.mark.skipif(not _found('dcent_i', '1.1.0.0', kind='members'), reason='DCENT-I members not found')
 def test_members_average_to_mean():
-    mem = Instrumental.from_version('dcent_i', '1.1.0.0', kind='members', time_slice=(2000, 2002))
-    mean = Instrumental.from_version('dcent_i', '1.1.0.0', time_slice=(2000, 2002))
+    mem = Instrumental.field('dcent_i', '1.1.0.0', kind='members', time_slice=(2000, 2002))
+    mean = Instrumental.field('dcent_i', '1.1.0.0', time_slice=(2000, 2002))
     assert mem.data.sizes['member'] == 200
     xr.testing.assert_allclose(mem.gmst().mean('member'), mean.gmst(), atol=5e-3)
+
+
+@pytest.mark.skipif(not (_found('hadcrut5', '5.2.0.0', kind='members', region='global')
+                         and _found('hadcrut5', '5.2.0.0')),
+                    reason='HadCRUT5 5.2.0.0 series or field not found')
+class TestHadCRUT5Series:
+
+    def test_series_shape_and_label(self):
+        s = Instrumental.series('hadcrut5', '5.2.0.0')
+        assert s.data.dims == ('member', 'year')
+        assert s.data.sizes['member'] == 200
+        assert list(s.data.member.values[[0, -1]]) == [1, 200]
+        assert s.label == 'HadCRUT5 v5.2.0.0 (global)'
+        assert s.data.attrs['region'] == 'global'
+
+    def test_series_mean_close_to_field_gmst(self):
+        # Close but not equal: the Met Office series is (NH + SH) / 2, gmst()
+        # a cos(lat) mean over cells with data (up to ~0.02 K apart, 1950s).
+        s = Instrumental.series('hadcrut5', '5.2.0.0', time_slice=(1950, None))
+        g = Instrumental.field('hadcrut5', '5.2.0.0', time_slice=(1950, None)).gmst()
+        xr.testing.assert_allclose(s.data.mean('member'), g, atol=5e-2)
+
+    def test_monthly_recentered(self):
+        s = Instrumental.series('hadcrut5', '5.2.0.0', region='nh', annualize=False,
+                                ref_period=(1850, 1900))
+        ref = s.data.isel(time=(s.data['year_of'] <= 1900).values)
+        assert abs(float(ref.mean())) < 1e-10
+
+    def test_field_methods_refused(self):
+        s = Instrumental.series('hadcrut5', '5.2.0.0')
+        with pytest.raises(TypeError, match='gridded field'):
+            s.gmst()

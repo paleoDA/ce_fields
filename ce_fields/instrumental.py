@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Instrumental gridded temperature products (HadCRUT5, CRUTEM5, Berkeley Earth,
-DCENT-I, ...), loaded by explicit version.
+Instrumental temperature products (HadCRUT5, CRUTEM5, Berkeley Earth,
+DCENT-I, ...), loaded by explicit version: gridded fields with
+`Instrumental.field()`, and the area-mean series some products publish
+(e.g. HadCRUT5's 200-member global and NH series) with `Instrumental.series()`.
 
-Every load names its version: `Instrumental.from_version('hadcrut5', '5.1.0.0')`.
+Every load names its version: `Instrumental.field('hadcrut5', '5.1.0.0')`.
 There is deliberately no default and no "latest", because these products
 revise past values between releases, so a number computed from one release
 is not reproducible from another. The catalog lives in data_config.yml (keys
-`instr_<product>_<version>_<variable>_<kind>`, one per file), so a new release
+`instr_<product>_<version>_<variable>_<kind>[_<region>]`, one per file), so a new release
 is registered by adding an entry there, not by editing this module.
 
 Each entry also carries a `version_check` (a global attribute of the file and
@@ -17,7 +19,8 @@ download saved under the old file name cannot silently stand in for the
 version that was asked for.
 
 All products are returned on the same conventions as ce_fields' LMR loader:
-dims (`year` or `time`, `lat`, `lon`[, `member`]), latitude ascending,
+dims (`year` or `time`, `lat`, `lon`[, `member`]) for fields and
+(`year` or `time`[, `member`]) for series, latitude ascending,
 longitude 0-360 by default, and numeric years (integer `year` once annualized,
 decimal mid-month `time` otherwise).
 
@@ -26,6 +29,7 @@ Created on Tue Nov 24 2026
 """
 
 import glob
+import warnings
 from typing import Optional
 
 import numpy as np
@@ -36,6 +40,8 @@ from ce_fields.data_config import DataConfig
 
 CFTIME_CODER = xr.coders.CFDatetimeCoder(use_cftime=True)
 CATALOG_PREFIX = 'instr_'
+GRID = 'grid'                 # `region` of a gridded field
+SERIES_REGIONS = ('global', 'nh', 'sh')
 
 # Version-independent facts about each product. Version-specific facts
 # (file, variable name, version check) live in data_config.yml.
@@ -57,7 +63,9 @@ PRODUCTS = {
 
 def catalog(config: Optional[DataConfig] = None) -> pd.DataFrame:
     """Every registered instrumental file, one row per (product, version,
-    variable, kind), with whether it is found on this machine."""
+    variable, kind, region), with whether it is found on this machine.
+    `region` is 'grid' for gridded fields, else the region of an area-mean
+    series ('global', 'nh', 'sh')."""
     config = config or DataConfig()
     rows = []
     for key, info in config.config['files'].items():
@@ -70,12 +78,12 @@ def catalog(config: Optional[DataConfig] = None) -> pd.DataFrame:
             path, found = None, False
         rows.append(dict(product=info['product'], version=str(info['version']),
                          variable=info['variable'], kind=info['kind'],
-                         found=found, key=key, path=path))
+                         region=info.get('region', GRID), found=found, key=key, path=path))
     return pd.DataFrame(rows)
 
 
-def _find_entry(config, product, version, variable, kind):
-    """Resolve (product, version, variable, kind) to one catalog key, with an
+def _find_entry(config, product, version, variable, kind, region=GRID):
+    """Resolve (product, version, variable, kind, region) to one catalog key, with an
     error that lists what *is* registered when nothing matches."""
     if not isinstance(version, str):
         raise TypeError(f"version must be a string such as '5.1.0.0', got {version!r} "
@@ -90,11 +98,14 @@ def _find_entry(config, product, version, variable, kind):
                          "To add one, copy an entry in ce_fields/data_config.yml.")
     match = of_product[(of_product['version'] == version)
                        & (of_product['variable'] == variable)
-                       & (of_product['kind'] == kind)]
+                       & (of_product['kind'] == kind)
+                       & (of_product['region'] == region)]
     if match.empty:
-        have = of_product[of_product['version'] == version][['variable', 'kind']]
-        raise ValueError(f"{product} {version} has no variable='{variable}', kind='{kind}'. "
-                         f"Available: {list(map(tuple, have.values))}")
+        have = of_product[of_product['version'] == version][['variable', 'kind', 'region']]
+        what = "field" if region == GRID else f"region='{region}' series"
+        raise ValueError(f"{product} {version} has no {what} with variable='{variable}', "
+                         f"kind='{kind}'. Available (variable, kind, region): "
+                         f"{list(map(tuple, have.values))}")
     return match['key'].iloc[0]
 
 
@@ -155,43 +166,47 @@ def _recenter(da: xr.DataArray, ref_period: tuple) -> xr.DataArray:
 
 
 class Instrumental:
-    """A versioned instrumental temperature field.
+    """A versioned instrumental temperature field or area-mean series.
 
     Attributes
     ----------
     data : xr.DataArray
-        dims (`year` | `time`, `lat`, `lon`[, `member`]); provenance in `data.attrs`.
-    product, version, variable, kind : str
-        What was loaded, exactly as requested.
+        Field: dims (`year` | `time`, `lat`, `lon`[, `member`]).
+        Series: dims (`year` | `time`[, `member`]).
+        Provenance in `data.attrs`.
+    product, version, variable, kind, region : str
+        What was loaded, exactly as requested; `region` is 'grid' for a field.
 
     Examples
     --------
-    >>> hc = Instrumental.from_version('hadcrut5', '5.1.0.0')
+    >>> hc = Instrumental.field('hadcrut5', '5.1.0.0')
     >>> gmst = hc.gmst(ref_period=(1951, 1980))
     >>> hc.label
     'HadCRUT5 v5.1.0.0'
+    >>> ens = Instrumental.series('hadcrut5', '5.2.0.0', region='global')   # (year, member)
     >>> Instrumental.catalog()          # what is registered, and found here
     """
 
     catalog = staticmethod(catalog)
 
     def __init__(self, data: xr.DataArray, product: str, version: str,
-                 variable: str, kind: str):
+                 variable: str, kind: str, region: str = GRID):
         self.data = data
         self.product = product
         self.version = version
         self.variable = variable
         self.kind = kind
+        self.region = region
 
     @classmethod
-    def from_version(cls, product: str, version: str,
-                     variable: str = 'tas', kind: str = 'mean',
-                     annualize: bool = True, min_months: int = 12,
-                     time_slice: Optional[tuple] = None,
-                     ref_period: Optional[tuple] = None,
-                     lon_convention: str = '0_360',
-                     config: Optional[DataConfig] = None) -> 'Instrumental':
-        """Load one registered version of an instrumental product.
+    def field(cls, product: str, version: str,
+              variable: str = 'tas', kind: str = 'mean',
+              annualize: bool = True, min_months: int = 12,
+              time_slice: Optional[tuple] = None,
+              ref_period: Optional[tuple] = None,
+              lon_convention: str = '0_360',
+              config: Optional[DataConfig] = None) -> 'Instrumental':
+        """Load one registered version of an instrumental product's gridded field.
 
         Parameters
         ----------
@@ -222,8 +237,60 @@ class Instrumental:
         config : DataConfig, optional
             Defaults to ce_fields' own.
         """
+        return cls._load(product, version, variable, kind, GRID, annualize,
+                         min_months, time_slice, ref_period, lon_convention, config)
+
+    @classmethod
+    def from_version(cls, product: str, version: str, *args, **kwargs) -> 'Instrumental':
+        """Deprecated former name of `field`; same arguments."""
+        warnings.warn(
+            f"Instrumental.from_version() is deprecated and will be removed; use "
+            f"Instrumental.field('{product}', '{version}', ...) for gridded fields "
+            f"(same arguments), or Instrumental.series('{product}', '{version}', "
+            f"region='global') for area-mean series.",
+            FutureWarning, stacklevel=2)
+        return cls.field(product, version, *args, **kwargs)
+
+    @classmethod
+    def series(cls, product: str, version: str, region: str = 'global',
+               variable: str = 'tas', kind: str = 'members',
+               annualize: bool = True, min_months: int = 12,
+               time_slice: Optional[tuple] = None,
+               ref_period: Optional[tuple] = None,
+               config: Optional[DataConfig] = None) -> 'Instrumental':
+        """Load an area-mean series as published by the product itself, e.g.
+        HadCRUT5's 200-member global or Northern Hemisphere series.
+
+        These are the producer's own area means, so they are not the same as
+        `field(...).gmst()`: HadCRUT5, for instance, averages the hemispheres
+        (global = (NH + SH) / 2), while `gmst()` is a cos(lat)-weighted mean
+        over the cells with data.
+
+        Parameters
+        ----------
+        product, version : str
+            As in `field`; version is required. See `Instrumental.catalog()`.
+        region : str, optional
+            'global' (default), 'nh' or 'sh' -- whichever are registered.
+        variable : str, optional
+            Default 'tas'.
+        kind : str, optional
+            'members' (default; dims (`year` | `time`, `member`)) or 'mean',
+            whichever are registered.
+        annualize, min_months, time_slice, ref_period, config
+            As in `field`.
+        """
+        if region not in SERIES_REGIONS:
+            raise ValueError(f"region must be one of {SERIES_REGIONS}, got '{region}'")
+        return cls._load(product, version, variable, kind, region, annualize,
+                         min_months, time_slice, ref_period, '0_360', config)
+
+    @classmethod
+    def _load(cls, product, version, variable, kind, region, annualize,
+              min_months, time_slice, ref_period, lon_convention, config):
+        """Shared body of `field` (region 'grid') and `series`."""
         config = config or DataConfig()
-        key = _find_entry(config, product, version, variable, kind)
+        key = _find_entry(config, product, version, variable, kind, region)
         entry = config.config['files'][key]
         path = config.get_file_path(key)
         files = sorted(glob.glob(str(path)))
@@ -231,9 +298,9 @@ class Instrumental:
             raise FileNotFoundError(f"No file for '{key}' at {path}")
         file_version = _check_version(files[0], entry['version_check'], key)
         print(f"Loading {PRODUCTS.get(product, {}).get('name', product)} v{version} "
-              f"({variable}, {kind}) from: {path}")
+              f"({variable}, {kind}{'' if region == GRID else ', ' + region}) from: {path}")
 
-        if kind == 'members':
+        if kind == 'members' and region == GRID:
             def keep_var(ds):
                 sub = ds[[entry['var']]]
                 if 'realization' in sub.dims:
@@ -248,14 +315,17 @@ class Instrumental:
         if 'since' in str(ds['time'].attrs.get('units', '')):
             ds = xr.decode_cf(ds, decode_times=CFTIME_CODER)
         da = ds[entry['var']]
-        for coord in ('realization',):
+        if 'realization' in da.dims:      # one file holding all members (series)
+            da = da.rename(realization='member')
+        for coord in ('realization', 'latitude', 'longitude'):
             if coord in da.coords and coord not in da.dims:
                 da = da.drop_vars(coord)
 
         years, months = _year_month(da['time'])
         da = da.assign_coords(time=(years + (months - 0.5) / 12).astype(float),
                               year_of=('time', years), month_of=('time', months))
-        da = _harmonize(da, lon_convention)
+        if region == GRID:
+            da = _harmonize(da, lon_convention)
 
         if annualize:
             counts = pd.Series(years).value_counts()
@@ -284,12 +354,14 @@ class Instrumental:
         da.name = variable
         da.attrs.update(
             product=product, version=version, variable=variable, kind=kind,
-            catalog_key=key, source_path=str(path), file_version=file_version,
+            region=region, catalog_key=key, source_path=str(path), file_version=file_version,
             native_baseline=meta.get('native_baseline'),
             baseline=tuple(ref_period) if ref_period else meta.get('native_baseline'),
             reference=meta.get('reference', ''),
-            units='K (anomaly)', label=f"{meta.get('name', product)} v{version}")
-        return cls(da, product, version, variable, kind)
+            units='K (anomaly)',
+            label=f"{meta.get('name', product)} v{version}"
+                  + ('' if region == GRID else f" ({region})"))
+        return cls(da, product, version, variable, kind, region)
 
     @property
     def label(self) -> str:
@@ -305,6 +377,7 @@ class Instrumental:
         """Cos(lat)-weighted global mean over the cells with data, as in
         `LMR.compute_global_mean()`; re-centered to `ref_period` if given.
         For land- or ocean-only variables this is a land/ocean mean, not GMST."""
+        self._require_field('gmst')
         weights = np.cos(np.deg2rad(self.data['lat']))
         gm = self.data.weighted(weights).mean(['lat', 'lon'])
         if ref_period is not None:
@@ -318,6 +391,7 @@ class Instrumental:
     def grid_bounds(self):
         """(lat_bnds, lon_bnds), each (n, 2), from cell-center midpoints, for
         conservative regridding (e.g. xESMF). Latitude edges are clipped to +-90."""
+        self._require_field('grid_bounds')
         def edges(c):
             mid = (c[1:] + c[:-1]) / 2
             return np.concatenate([[c[0] - (mid[0] - c[0])], mid, [c[-1] + (c[-1] - mid[-1])]])
@@ -329,7 +403,13 @@ class Instrumental:
                              coords={'lon': self.data['lon']})
         return lat_b, lon_b
 
+    def _require_field(self, method):
+        if self.region != GRID:
+            raise TypeError(f"{method}() needs a gridded field; this is the '{self.region}' "
+                            "series, which is already an area mean (use .data).")
+
     def __repr__(self):
         y = self.years
+        where = '' if self.region == GRID else f", region='{self.region}'"
         return (f"Instrumental('{self.product}', '{self.version}', variable='{self.variable}', "
-                f"kind='{self.kind}', shape={self.data.shape}, years={int(y.min())}-{int(y.max())})")
+                f"kind='{self.kind}'{where}, shape={self.data.shape}, years={int(y.min())}-{int(y.max())})")
