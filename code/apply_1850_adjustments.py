@@ -39,7 +39,7 @@ from pathlib import Path
 
 import xarray as xr
 
-sys.path.insert(0, '..')
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ce_fields.data_config import DataConfig
 from ce_fields.pmip4_config import MODEL_VAR
 from ce_fields.io import open_nc_or_zarr

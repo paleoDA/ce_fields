@@ -3,9 +3,9 @@ Volcanic forcing (eVolv2k v3, Gao et al. 2008) and superposed epoch analysis (SE
 
 eVolv2k (Toohey and Sigl, 2017) is the volcanic forcing of the PMIP4
 past1000/past2k experiments; it ships with the package (see
-ce_fields/data/eVolv2k_v3/README.md for why it lives here). A few runs
-(CESM1.1, iCESM; see pmip4_config.VOLCANIC_FORCING) were instead forced with
-Gao et al. (2008, IVI2), which is read remotely from Rutgers.
+ce_fields/data/eVolv2k_v3/README.md for why it lives here). iCESM (see
+pmip4_config.VOLCANIC_FORCING) was instead forced with Gao et al. (2008,
+IVI2), which is read remotely from Rutgers.
 
 The SEA follows the LMR volcanic analysis (LMR_VolcanicResponse_sea.py /
 gmt_volcanicSEA2.py, Emile-Geay 2017): for each event, take the window
