@@ -66,12 +66,19 @@ and no "latest", because each release revises past values:
 ```python
 from ce_fields import Instrumental
 
-Instrumental.catalog()                                    # registered (product, version, variable, kind), and found here
-hc = Instrumental.from_version('hadcrut5', '5.1.0.0')     # annual field, (year, lat, lon), lon 0-360
+Instrumental.catalog()                                    # registered (product, version, variable, kind, region), and found here
+hc = Instrumental.field('hadcrut5', '5.1.0.0')            # annual field, (year, lat, lon), lon 0-360
 gmst = hc.gmst(ref_period=(1951, 1980))                   # cos(lat)-weighted, re-centered
 hc.label                                                  # 'HadCRUT5 v5.1.0.0' -- use in plots/tables
-dcent = Instrumental.from_version('dcent_i', '1.1.0.0', kind='members')   # 200 members, lazily
+dcent = Instrumental.field('dcent_i', '1.1.0.0', kind='members')   # 200 members, lazily
+ens = Instrumental.series('hadcrut5', '5.2.0.0', region='nh')      # producer's own NH series, (member, year)
 ```
+
+`field()` loads gridded fields (`from_version()`, its former name, still
+works but is deprecated); `series()` loads the area-mean series a product publishes itself
+(`region` = `'global'`, `'nh'` or `'sh'`). Those are the producer's own
+averages, so they differ slightly from `field(...).gmst()`: HadCRUT5's global
+series is (NH + SH) / 2, `gmst()` a cos(lat)-weighted mean over cells with data.
 
 Each catalog entry carries a `version_check` against the file's own metadata,
 and loading refuses a file that fails it. Years with fewer than 12 months
@@ -97,7 +104,7 @@ can be rebuilt without them.
 | LMR v2.1 ([Tardif et al., 2019](https://doi.org/10.5194/cp-15-1251-2019)) | `lmr_data` | `LMRv2.1/`: gridded ensemble mean and spread, GMST ensemble | 2.3 GB (GMST only: 12 MB) | NCEI Paleoclimatology, <https://www.atmos.uw.edu/~hakim/lmr/> |
 | LMR Online ([Perkins and Hakim, 2021](https://doi.org/10.1029/2020PA003959)) | `lmr_data` | `LMRonline/…/`: gridded ensemble mean and variance, GMST indices | 1.4 GB (GMST only: 153 MB) | NCEI Paleoclimatology, <https://www.atmos.uw.edu/~hakim/lmr/> |
 | LMR Seasonal ([Meng et al., 2025](https://doi.org/10.1175/JCLI-D-25-0048.1)) | `lmr_data` | `LMR_seasonal/`: gridded ensemble mean, GMST ensemble | 0.6 GB (GMST only: 29 MB) | <https://atmos.uw.edu/~zilumeng/LMR_Seasonal/data/> |
-| HadCRUT5 ([Morice et al., 2021](https://doi.org/10.1029/2019JD032361)): v5.0.1.0, v5.0.2.0, v5.1.0.0 | `hadcrut5_data` | `HadCRUT.<version>.analysis.anomalies.ensemble_mean.nc` | ~30 MB per version | [Met Office](https://www.metoffice.gov.uk/hadobs/hadcrut5/) |
+| HadCRUT5 ([Morice et al., 2021](https://doi.org/10.1029/2019JD032361)): v5.0.1.0, v5.0.2.0, v5.1.0.0, v5.2.0.0 | `hadcrut5_data` | `HadCRUT.<version>.analysis.anomalies.ensemble_mean.nc`; for v5.2.0.0 also `HadCRUT.5.2.0.0.analysis.ensemble_series.{global,northern_hemisphere}.monthly.nc` (200-member area-mean series, for `series()`) | ~30 MB per version (series: 2 MB each) | [Met Office](https://www.metoffice.gov.uk/hadobs/hadcrut5/) |
 | CRUTEM5 ([Osborn et al., 2021](https://doi.org/10.1029/2019JD032352)): v5.0.2.0 | `crutem5_data` | `CRUTEM.5.0.2.0.anomalies.nc` | 12 MB | [Met Office](https://www.metoffice.gov.uk/hadobs/crutem5/) |
 | Berkeley Earth land TAVG, 1x1 deg ([Rohde and Hausfather, 2020](https://doi.org/10.5194/essd-12-3469-2020)): build 2025-01-09 | `berkeley_earth_data` | `Complete_TAVG_LatLong1.nc` | 190 MB | [Berkeley Earth](https://berkeleyearth.org/data/) |
 | DCENT-I ([Chan et al., 2026](https://doi.org/10.1002/gdj3.70054)): v1.1.0.0 | `dcent_data` | `v1.1.0/DCENT_I_1.1.0.0_mean_spread_{ts,lsat,sst}.nc`, `v1.1.0/DCENT_I_1.1.0.0_member_*.nc` | 8 GB (means only: 0.3 GB) | DCENT |

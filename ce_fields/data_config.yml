@@ -199,9 +199,10 @@ files:
     path: "{neukom_data}/PCR.nc"
     description: "Neukom2019 Principal Component Regression (PCR) 100-member gridded ensemble"
 
-  # Instrumental gridded temperature products, loaded with
-  # ce_fields.Instrumental.from_version(product, version, ...).
-  # One entry per (product, version, variable, kind): the version is part of
+  # Instrumental temperature products, loaded with
+  # ce_fields.Instrumental.field(product, version, ...) (gridded) or
+  # .series(product, version, region=...) (area means).
+  # One entry per (product, version, variable, kind[, region]): the version is part of
   # the key and is never implied, because these products revise past values
   # from one release to the next. `version_check` names a global attribute of
   # the file and a string it must contain; the loader refuses a file that
@@ -213,6 +214,7 @@ files:
   #           lsat = land surface air temperature anomaly (land only)
   #           sst  = sea surface temperature anomaly
   # kind:     mean = ensemble mean / best estimate; members = ensemble members
+  # region:   absent = gridded field; global, nh or sh = area-mean series
   instr_hadcrut5_5.0.1.0_tas_mean:
     path: "{hadcrut5_data}/HadCRUT.5.0.1.0.analysis.anomalies.ensemble_mean.nc"
     description: "HadCRUT5 v5.0.1.0 ensemble-mean monthly anomalies (rel. 1961-1990), 5x5 deg, 1850-2020"
@@ -242,6 +244,42 @@ files:
     kind: mean
     var: tas_mean
     version_check: {attr: version, contains: "HadCRUT.5.1.0.0"}
+
+  instr_hadcrut5_5.2.0.0_tas_mean:
+    path: "{hadcrut5_data}/HadCRUT.5.2.0.0.analysis.anomalies.ensemble_mean.nc"
+    description: "HadCRUT5 v5.2.0.0 ensemble-mean monthly anomalies (rel. 1961-1990), 5x5 deg, 1850-2026/09 (CRUTEM.5.2.0.0 + HadSST.4.2.0.0)"
+    product: hadcrut5
+    version: "5.2.0.0"
+    variable: tas
+    kind: mean
+    var: tas_mean
+    version_check: {attr: version, contains: "HadCRUT.5.2.0.0"}
+
+  # Area-mean series published by the product itself (region: global, nh,
+  # sh), loaded with Instrumental.series(); gridded entries have no region
+  # field and are loaded with Instrumental.field(). Series files also hold
+  # coverage_unc and area_fraction, which the loader does not return.
+  instr_hadcrut5_5.2.0.0_tas_members_global:
+    path: "{hadcrut5_data}/HadCRUT.5.2.0.0.analysis.ensemble_series.global.monthly.nc"
+    description: "HadCRUT5 v5.2.0.0 global-mean monthly anomaly series (rel. 1961-1990), 200 realizations, 1850-2026/09"
+    product: hadcrut5
+    version: "5.2.0.0"
+    variable: tas
+    kind: members
+    region: global
+    var: tas
+    version_check: {attr: version, contains: "HadCRUT.5.2.0.0"}
+
+  instr_hadcrut5_5.2.0.0_tas_members_nh:
+    path: "{hadcrut5_data}/HadCRUT.5.2.0.0.analysis.ensemble_series.northern_hemisphere.monthly.nc"
+    description: "HadCRUT5 v5.2.0.0 Northern Hemisphere mean monthly anomaly series (rel. 1961-1990), 200 realizations, 1850-2026/09"
+    product: hadcrut5
+    version: "5.2.0.0"
+    variable: tas
+    kind: members
+    region: nh
+    var: tas
+    version_check: {attr: version, contains: "HadCRUT.5.2.0.0"}
 
   instr_crutem5_5.0.2.0_lsat_mean:
     path: "{crutem5_data}/CRUTEM.5.0.2.0.anomalies.nc"
