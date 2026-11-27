@@ -387,6 +387,18 @@ files:
     var: sst_mean
     version_check: {attr: version, contains: "1.1.0.0"}
 
+  # Derived, not a producer file: built by code/build_dcent_i_global_series.py
+  instr_dcent_i_1.1.0.0_tas_members_global:
+    path: "{dcent_data}/v1.1.0/DCENT_I_1.1.0.0_ensemble_series.global.monthly.nc"
+    description: "DCENT-I v1.1.0.0 global mean monthly anomaly series (rel. 1982-2014), 200 members; cos-lat mean of each member's infilled ts field, derived by code/build_dcent_i_global_series.py, 1850-2025"
+    product: dcent_i
+    version: "1.1.0.0"
+    variable: tas
+    kind: members
+    region: global
+    var: tas
+    version_check: {attr: version, contains: "1.1.0.0"}
+
   # Member files hold all three variables (ts, lsat, sst), one realization each.
   instr_dcent_i_1.1.0.0_tas_members:
     path: "{dcent_data}/v1.1.0/DCENT_I_1.1.0.0_member_*.nc"

@@ -163,3 +163,37 @@ class TestHadCRUT5Series:
         s = Instrumental.series('hadcrut5', '5.2.0.0')
         with pytest.raises(TypeError, match='gridded field'):
             s.gmst()
+
+
+@pytest.mark.skipif(not (_found('dcent_i', '1.1.0.0', kind='members', region='global')
+                         and _found('dcent_i', '1.1.0.0', kind='members')),
+                    reason='DCENT-I 1.1.0.0 global series or member fields not found')
+class TestDCENTISeries:
+    """The derived DCENT-I series (code/build_dcent_i_global_series.py) loads
+    as HadCRUT5's producer series does, and matches the member fields."""
+
+    def test_series_shape_and_label(self):
+        s = Instrumental.series('dcent_i', '1.1.0.0')
+        assert s.data.dims == ('member', 'year')
+        assert s.data.sizes['member'] == 200
+        assert list(s.data.member.values[[0, -1]]) == [1, 200]
+        assert int(s.data.year[0]) == 1850 and int(s.data.year[-1]) == 2025
+        assert s.label == 'DCENT-I v1.1.0.0 (global)'
+        assert s.data.attrs['region'] == 'global'
+        assert not bool(s.data.isnull().any())
+
+    def test_series_equals_member_field_gmst(self):
+        # Same definition (cos-lat mean of ts), so equal up to float32 rounding
+        s = Instrumental.series('dcent_i', '1.1.0.0', time_slice=(2000, 2002))
+        f = Instrumental.field('dcent_i', '1.1.0.0', kind='members', time_slice=(2000, 2002))
+        xr.testing.assert_allclose(s.data, f.gmst().transpose('member', 'year'), atol=1e-5)
+
+    def test_monthly_recentered(self):
+        s = Instrumental.series('dcent_i', '1.1.0.0', annualize=False, ref_period=(1961, 1990))
+        ref = s.data.isel(time=((s.data['year_of'] >= 1961) & (s.data['year_of'] <= 1990)).values)
+        assert abs(float(ref.mean())) < 1e-10
+
+    def test_field_methods_refused(self):
+        s = Instrumental.series('dcent_i', '1.1.0.0')
+        with pytest.raises(TypeError, match='gridded field'):
+            s.gmst()
